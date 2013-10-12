@@ -4,13 +4,13 @@
 
 This is a presentation intended to help you grasp the basics of Varnish Cache.
 The contents are in French but the code is written and documented in English,
-you can [~~watch it~~](https://dridi.github.io/tour-de-varnish) at your own
-risks, I've suffered a couple Firefox crashes during the development caused by
-some SFX.  The talk was organized by Zenika and Varnish Software and hosted in
-both Lyon and Paris by Zenika. The presentation is meant to be displayed in a
-4:3 aspect ratio, but it will scale to any resolution. You can use the
-responsive view of your browser to enforce a proper resolution. Use the space
-bar to go through the presentation.
+you can [watch it](http://dridi.github.io/tour-de-varnish) at your own risks,
+I've suffered a couple Firefox crashes during the development caused by some
+SFX.  The talk was organized by Zenika and Varnish Software and hosted in both
+Lyon and Paris by Zenika. The presentation is meant to be displayed in a 4:3
+aspect ratio, but it will scale to any resolution. You can use the responsive
+view of your browser to enforce a proper resolution. Use the space bar to go
+through the presentation.
 
 ## History
 
