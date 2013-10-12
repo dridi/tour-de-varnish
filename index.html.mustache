@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tour de Varnish</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="js/three-r61.min.js"></script>
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/tour-de-varnish.min.js"></script>
+    <script type="text/javascript">
+      var context = {};
+
+      $(window).load(function () {
+        $.getJSON('data/destinations.json').then(function(data) {
+          context.destinations = data;
+          return $.getJSON('data/{{route}}.json');
+        }).then(function(data) {
+          context.route = data;
+          var stage = new Stage(context);
+          $(window).on('resize', stage.resize);
+          stage.begin();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <img id="world_map" src="img/{{map}}" />
+    {{> slides.svg}}
+  </body>
+</html>
