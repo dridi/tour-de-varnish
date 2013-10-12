@@ -1,13 +1,16 @@
-# Around _Varnish_ in eighty days
+# Around _Varnish_ in Eighty Days
 
 ## TL;DR
 
 This is a presentation intended to help you grasp the basics of Varnish Cache.
-The contents are in French but the code is in English, you can
-[~~watch it~~](https://dridi.github.io/tour-de-varnish) at your own risks,
-I've suffered a couple Firefox crashes during the development caused by some
-SFX. The talk was organized by Zenika and Varnish Software and hosted in both
-Lyon and Paris by Zenika.
+The contents are in French but the code is written and documented in English,
+you can [~~watch it~~](https://dridi.github.io/tour-de-varnish) at your own
+risks, I've suffered a couple Firefox crashes during the development caused by
+some SFX.  The talk was organized by Zenika and Varnish Software and hosted in
+both Lyon and Paris by Zenika. The presentation is meant to be displayed in a
+4:3 aspect ratio, but it will scale to any resolution. You can use the
+responsive view of your browser to enforce a proper resolution. Use the space
+bar to go through the presentation.
 
 ## History
 
@@ -19,7 +22,7 @@ One week later...
 
 > ‒ Boss, I need a couple days for the upcoming Varnish presentation.
 >
-> ‒ Ok.
+> ‒ OK.
 
 ## What is it ?
 
@@ -28,7 +31,7 @@ a rotating earth for the _traveling around the world_ part. This is obviously
 inspired by Jules Verne's _Around the World in Eighty Days_. In this talk, you
 discover Varnish Cache, how it works, and how awesome it is `;-)`.
 
-The result is nice, but this is just my opinion and  my eye-candy-o-meter has
+The result is nice, but this is just my opinion and my eye-candy-o-meter has
 very low standards. The big limitation is that AFAIK, it only works on Linux
 with Firefox 20+. It doesn't work with WebKit-based browsers (but you could
 still send me a pull request :) and the bottom line is that it works on the
@@ -36,26 +39,57 @@ speaker's laptop (that would be mine) so it's fine.
 
 ## Why did you do that ?
 
-Well, this is embarassing... You know those developers bitching about how you
+Well, this is embarrassing... You know those developers bitching about how you
 should [KISS](https://fr.wikipedia.org/wiki/Keep_it_Simple,_Stupid) and stuff.
-I'm one of them, but when it comes to my own project, I fail and happily create
-a lot of complexity. And it was fun.
+I'm one of them, but when it comes to my own projects, I fail and happily
+create a lot of complexity. And it was fun.
 
 ## What's the license ?
 
-I need to double check the assets licenses for both the contents and code. It
-will probably be a flavour of CC for the presentation and BSD for the code.
+The code is distributed under the terms of the 2-clause BSD license (see
+LICENSE-BSD for more information) and the contents of the talk (the slides are
+distributed under the terms of the Creative Commons Attribution-Non
+Commercialr-Share Alike 3.0 license (see LICENSE-CC-BY-NC-SA for more
+information).
 
-I believe the use of the images falls into fair use, they were shamelessly
-stolen from:
+### Dependencies
+
+Tour de Varnish relies on [jquery](http://jquery.com/) and
+[three.js](http://threejs.org/), both distributed under the terms of the
+[MIT](http://www.opensource.org/licenses/MIT) license.
+
+### Images
+
+![CC-BY](https://i.creativecommons.org/l/by/2.0/88x31.png)
+
+Some images used in this presentation are distributed by their original authors
+under the Creative Commons Attribution 2.0 license:
+* https://secure.flickr.com/photos/crucially/
+
+![CC-BY-SA](https://i.creativecommons.org/l/by-sa/2.0/88x31.png)
+
+Some images used in this presentation are distributed by their original authors
+under the Creative Commons Attribution-Share Alike 2.0 license:
+* https://secure.flickr.com/photos/grantzprice/
+
+![CC-BY-NC](https://i.creativecommons.org/l/by-nc/2.5/88x31.png)
+
+Some images used in this presentation are distributed by their original authors
+under the Creative Commons Attribution-Non Commercial 2.5 license:
+* https://www.xkcd.com/
+
+![CC-BY-NC-SA](https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
+
+Some images used in this presentation are distributed by their original authors
+under the Creative Commons Attribution-Non Commercial-Share Alike 3.0 license:
+* https://github.com/varnish/Varnish-Book/
+
+I believe the use of the other images falls into fair use, they were
+shamelessly stolen from:
 * http://www.zenika.com/
 * https://www.varnish-software.com/
-* https://www.xkcd.com/192/
-* https://www.xkcd.com/1095/
 * http://www.unixstickers.com/trollface-coolface-problem-meme-shaped-sticker
-* https://upload.wikimedia.org/
 * https://github.com/bsdphk
-* https://github.com/varnish/Varnish-Book/
 * http://www.freebsd.org/
 * https://www.kernel.org/
 * https://virtualbox.org/
@@ -64,17 +98,35 @@ stolen from:
 * https://github.com/tsaastam/cljs-webgl-example
 * http://www.blankmaninc.com/the-purge-worth-killing-over-no-spoilers
 * https://onnecar.wordpress.com/?s=cat
-* https://secure.flickr.com/photos/grantzprice/
 * http://www.tumblr.com/tagged/tumblr-face
-* https://secure.flickr.com/photos/crucially/3716344792/sizes/o/
 * http://www.achievementgen.com
 
+### Fonts
+
+The [Liberation](https://www.redhat.com/promo/fonts/) fonts are distributed
+under the terms of the GPL+exception license. The
+[Overlock](http://www.fontsquirrel.com/license/overlock) fonts are distributed
+under the terms of the SIL Open Font License 1.1.
 
 ## How does it work ?
 
-It's an HTML page, an SVG file, a javascript file, and json data. The script
-currently reads files from harcoded paths, but at least it's data-driven,
-which helped a lot during the building of the presentation.
+It's an HTML page, an SVG file, a javascript file, and json data. There is a
+little build system that puts the SVG file inside the HTML page, and
+substitutes reference to files by the actual file names.
+
+```bash
+$ make
+mustache context.yml index.html.mustache > index.html
+slimit -m js/tour-de-varnish.js > js/tour-de-varnish.min.js
+$ firefox index.html
+```
+
+You can first check that everything needed for the build is installed:
+
+```bash
+$ make install-check
+All green !
+```
 
 ### `tour-de-varnish.js`
 
@@ -120,68 +172,61 @@ coordinates on the sphere.
         },
         [...]
 }
-
 ```
 
-For each destination, `rx` and `ry` are the 3D rotation angles to reach for
-the destination to be centered on the screen. A destination contains [1..)
+For each destination, `rx` and `ry` are the 3D Euler rotation angles to reach
+for the destination to be centered on the screen. A destination contains [1..)
 `steps` (where we travel) represented as 2D coordinates on the texture. The
 `Earth` object assumes a texture of `1024x512` pixels and will draw a path
 between destinations and a spot on the destinations. Destinations can be used
 in any order and even several times, it's the `Earth`'s job to draw the path
-aniway... The `bx` parameter indicates that the X axis boundary of the texture
+anyway...  The `bx` parameter indicates that the X axis boundary of the texture
 must be crossed. It is implemented to the bare minimum and will probably not
 work with a backward rotation.
 
-### `route.json`
+### `{{route}}.json`
 
 This file contains a list of actions to take during the travel.
 
 ```json
 [
-        {
-                "clazz": "Slider",
-                "args": "['title']"
-        },
-        {
-                "clazz": "Globe",
-                "args": "earth"
-        },
-        {
-                "clazz": "EarthWalker",
-                "args": "earth, destinations.france, 0"
-        },
-        {
-                "clazz": "Slider",
-                "args": "['verne', 'red_herring', 'me']"
-        },
-        {
-                "clazz": "EarthWalker",
-                "args": "earth, destinations.norway, 2000"
-        },
-        {
-                "clazz": "Slider",
-                "args": "['norway', 'principle']"
-        },
-        {
-                "clazz": "EarthWalker",
-                "args": "earth, destinations.russia, 1000"
-        },
-        [...]
+	{
+		"clazz": "Slider",
+		"args": ["title"]
+	},
+	{
+		"clazz": "Globe"
+	},
+	{
+		"clazz": "EarthWalker",
+		"args": {"destination": "france", "wait": 0, "duration": 1000}
+	},
+	{
+		"clazz": "Slider",
+		"args": ["verne", "red_herring", "me"]
+	},
+	{
+		"clazz": "EarthWalker",
+		"args": {"destination": "norway", "wait": 2000, "duration": 300}
+	},
+	{
+		"clazz": "Slider",
+		"args": ["norway", "principle"]
+	},
+	[...]
 ]
-
 ```
 
 The `clazz` field contains the class name of the action to use, and `args`
-holds the parameters for the constructor. It's really ugly under the hood.
+holds the parameters for the action.
 
 # TODO
 
 Maybe one day...
 
 - ☑ make the talk
-- ☐ learn javascript (because the code sucks)
+- ☐ learn javascript (because the code is horrible)
 - ☐ backward navigation
-- ☐ add a build system
+- ☑ add a build system
 - ☐ fix race conditions
 - ☐ fix performance issues
