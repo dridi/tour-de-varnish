@@ -32,10 +32,9 @@ inspired by Jules Verne's _Around the World in Eighty Days_. In this talk, you
 discover Varnish Cache, how it works, and how awesome it is `;-)`.
 
 The result is nice, but this is just my opinion and my eye-candy-o-meter has
-very low standards. The big limitation is that AFAIK, it only works on Linux
-with Firefox 20+. It doesn't work with WebKit-based browsers (but you could
-still send me a pull request :) and the bottom line is that it works on the
-speaker's laptop (that would be mine) so it's fine.
+very low standards. The big limitation is that it's designed to work at least
+on the speaker's laptop (that would be mine, Firefox on Linux). If it doesn't
+work for you, do not hesitate to report an issue or send a pull request `:)`.
 
 ## Why did you do that ?
 
