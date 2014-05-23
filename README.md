@@ -229,3 +229,4 @@ Maybe one day...
 - ☑ add a build system
 - ☐ fix race conditions
 - ☐ fix performance issues
+- ☑ get rid of json
