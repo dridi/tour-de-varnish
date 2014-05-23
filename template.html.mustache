@@ -11,6 +11,7 @@
       var context = {};
 
       $(window).load(function () {
+        $(window).on("beforeunload", endJourney);
         $.getJSON('data/destinations.json').then(function(data) {
           context.destinations = data;
           return $.getJSON('data/{{route}}.json');

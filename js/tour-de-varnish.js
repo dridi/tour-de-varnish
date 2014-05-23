@@ -434,3 +434,7 @@ Stage = function(context) {
 		animate();
 	}
 }
+
+function endJourney() {
+	return "On arrête le voyage ???";
+}
