@@ -1,0 +1,186 @@
+---
+- clazz: Slider
+  args:
+    - breizhcamp-title
+- clazz: Globe
+- clazz: EarthWalker
+  args:
+    destination: france
+    wait: 0
+    duration: 1000
+- clazz: Slider
+  args:
+    - verne
+    - red_herring
+    - me
+- clazz: EarthWalker
+  args:
+    destination: norway
+    wait: 2000
+    duration: 300
+- clazz: Slider
+  args:
+    - norway
+    - principle
+- clazz: EarthWalker
+  args:
+    destination: russia
+    wait: 1000
+    duration: 500
+- clazz: Slider
+  args:
+    - freebsd
+    - linux
+    - windows
+    - package
+- clazz: EarthWalker
+  args:
+    destination: india
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - vcl
+    - state-machine
+    - snippet
+- clazz: EarthWalker
+  args:
+    destination: japan
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - backend
+    - virtualhost
+- clazz: EarthWalker
+  args:
+    destination: australia
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - cache
+    - invalidation
+    - grace
+- clazz: EarthWalker
+  args:
+    destination: hawaii
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - hawaii
+- clazz: EarthWalker
+  args:
+    destination: america
+    wait: 8000
+    duration: 2000
+- clazz: Slider
+  args:
+    - directors
+    - fallback
+- clazz: EarthWalker
+  args:
+    destination: newYork
+    wait: 1000
+    duration: 300
+- clazz: Slider
+  args:
+    - new-york
+    - inline-c
+    - vmods
+- clazz: EarthWalker
+  args:
+    destination: groenland
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - varnishadm
+- clazz: EarthWalker
+  args:
+    destination: mauritania
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - logs
+    - varnishlog
+- clazz: EarthWalker
+  args:
+    destination: libya
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - title4
+    - varnish3
+    - not_bad
+    - varnish4-guru
+- clazz: EarthWalker
+  args:
+    destination: congo
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - vcl4
+    - vmod4
+    - directors4
+- clazz: EarthWalker
+  args:
+    destination: chad
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - streaming
+    - threading3
+    - streaming4
+    - threading4
+- clazz: EarthWalker
+  args:
+    destination: sudan
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - security
+    - security4
+- clazz: EarthWalker
+  args:
+    destination: ghana
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - logs4
+    - transactions
+    - query-language
+- clazz: EarthWalker
+  args:
+    destination: libya
+    wait: 1000
+    duration: 1000
+- clazz: Slider
+  args:
+    - varnish4-guru
+    - varnish4
+    - not_bad4
+- clazz: EarthWalker
+  args:
+    destination: france
+    wait: 1000
+    duration: 600
+- clazz: Slider
+  args:
+    - speed
+    - figures
+    - conclusion
+    - achievement
+    - features
+- clazz: Globe
+- clazz: Slider
+  args:
+    - breizhcamp-feedback
+- clazz: Monad
