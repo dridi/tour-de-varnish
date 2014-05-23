@@ -5,12 +5,12 @@ AngleUtils = {
 	REV: Math.PI * 2,
 
 	/**
-	 * [0..REV)
+	 * [-PI..PI)
 	 */
 	mod: function(angle) {
 		// most likely 0..1 iteration each
-		while (angle >= this.REV) angle -= this.REV;
-		while (angle <         0) angle += this.REV;
+		while (angle >=  Math.PI) angle -= this.REV;
+		while (angle <  -Math.PI) angle += this.REV;
 		return angle;
 	}
 }
@@ -140,12 +140,13 @@ Earth = function(scene) {
 			goal: new THREE.Quaternion().setFromEuler(
 				new THREE.Euler(destination.rx, destination.ry)
 			).normalize(),
-			paths: preparePaths(destination)
+			paths: preparePaths()
 		}
 	};
 
 	this.walk = function(duration) {
-		var alpha = Math.min(1, (new Date().getTime()-travel.time)/duration);
+		var elapsed = new Date().getTime() - travel.time;
+		var alpha = Math.min(1, elapsed/duration);
 		var current = new THREE.Quaternion();
 
 		THREE.Quaternion.slerp(travel.start, travel.goal, current, alpha);
@@ -154,11 +155,12 @@ Earth = function(scene) {
 		texture.needsUpdate = true;
 		drawPaths(alpha);
 
-		if (alpha >= 0.95) {
+		if (elapsed >= duration) {
 			drawSteps();
 		}
 
-		return alpha == 1;
+		// give a 200ms delay for the stage to catch up
+		return elapsed > (duration + 200);
 	};
 
 	this.rotate = function(rotation) {
