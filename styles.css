@@ -57,7 +57,7 @@ svg>g.active {
 .code {
   font-family: 'Liberation Mono';
 }
-#title text {
+.title text {
   font-size: 90px;
 }
 .xkcd rect {
@@ -68,4 +68,11 @@ svg>g.active {
   font-family: 'Overlock SC', cursive;
   font-size: 18px;
   font-weight: 400;
+}
+.threading rect {
+  fill: white;
+  stroke: black;
+}
+.threading path {
+  fill: black;
 }
