@@ -17,14 +17,14 @@ env-check:
 	@which slimit   >/dev/null 2>&1 || (echo "Missing SlimIt python module" && exit 1)
 	@which js-yaml  >/dev/null 2>&1 || (echo "Missing js-yaml nodejs module" && exit 1)
 	@which jsonlint >/dev/null 2>&1 || (echo "Missing demjson python module" && exit 1)
+	@which pandoc   >/dev/null 2>&1 || (echo "Missing pandoc" && exit 1)
 	@echo 'All green !'
 
 %.html: %.yml template.html.mustache slides.svg.mustache
 	mustache $< template.html.mustache > $@
 
 %.html: %.md
-	: TODO $@
-	@touch $@
+	pandoc --standalone -f markdown -t html5 $< > $@
 
 %.min.js: %.js
 	slimit -m $< > $@
