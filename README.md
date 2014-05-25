@@ -46,10 +46,10 @@ create a lot of complexity. And it was fun.
 ## What's the license ?
 
 The code is distributed under the terms of the 2-clause BSD license (see
-LICENSE-BSD for more information) and the contents of the talk (the slides are
-distributed under the terms of the Creative Commons Attribution-Non
-Commercialr-Share Alike 3.0 license (see LICENSE-CC-BY-NC-SA for more
-information).
+LICENSE-BSD for more information) and the contents of the talks (the slides)
+are in the Public Domain where applicable. Otherwise, the slides are
+distributed under the terms of the _Do WTF You Want To Public License v2_ (see
+LICENSE-WTFPL for more information).
 
 ### Dependencies
 
@@ -57,35 +57,24 @@ Tour de Varnish relies on [jquery](http://jquery.com/) and
 [three.js](http://threejs.org/), both distributed under the terms of the
 [MIT](http://www.opensource.org/licenses/MIT) license.
 
-### Images
+### Build Dependencies
 
-![CC-BY](https://i.creativecommons.org/l/by/2.0/88x31.png)
+To build the slides, you will need the following programs in your `PATH`:
+- mustache
+- slimit
+- js-yaml
+- jsonlint
+- pandoc
 
-Some images used in this presentation are distributed by their original authors
-under the Creative Commons Attribution 2.0 license:
-* https://secure.flickr.com/photos/crucially/
+You can check your environment by running `make env-check`.
 
-![CC-BY-SA](https://i.creativecommons.org/l/by-sa/2.0/88x31.png)
+# Images
 
-Some images used in this presentation are distributed by their original authors
-under the Creative Commons Attribution-Share Alike 2.0 license:
-* https://secure.flickr.com/photos/grantzprice/
+I believe the use of the images falls into fair use, they were
+shamelessly stolen from various places including:
 
-![CC-BY-NC](https://i.creativecommons.org/l/by-nc/2.5/88x31.png)
-
-Some images used in this presentation are distributed by their original authors
-under the Creative Commons Attribution-Non Commercial 2.5 license:
-* https://www.xkcd.com/
-
-![CC-BY-NC-SA](https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
-
-Some images used in this presentation are distributed by their original authors
-under the Creative Commons Attribution-Non Commercial-Share Alike 3.0 license:
-* https://github.com/varnish/Varnish-Book/
-
-I believe the use of the other images falls into fair use, they were
-shamelessly stolen from:
 * http://www.zenika.com/
+* https://www.varnish-cache.org/
 * https://www.varnish-software.com/
 * http://www.unixstickers.com/trollface-coolface-problem-meme-shaped-sticker
 * https://github.com/bsdphk
@@ -111,19 +100,20 @@ under the terms of the SIL Open Font License 1.1.
 
 It's an HTML page, an SVG file, a javascript file, and json data. There is a
 little build system that puts the SVG file inside the HTML page, and
-substitutes reference to files by the actual file names.
+substitutes reference to files by the actual file names. Json files are now
+generated from YAML. Repeat after me: _"Json is not a hand-writing-friendly
+serialization format"_.
 
 ```bash
 $ make
-mustache context.yml index.html.mustache > index.html
-slimit -m js/tour-de-varnish.js > js/tour-de-varnish.min.js
+[...]
 $ firefox index.html
 ```
 
 You can first check that everything needed for the build is installed:
 
 ```bash
-$ make install-check
+$ make env-check
 All green !
 ```
 
@@ -140,37 +130,41 @@ It contains several classes:
 Under the hood, it relies on [jQuery](http://jquery.com/) and
 [three.js](http://threejs.org/).
 
-### `destinations.json`
+### `destinations.yml`
 
 This file contains a map of available destinations around the world, and
 coordinates on the sphere.
 
-```json
-{
-        "france": {
-                "rx": 0.84,
-                "ry": 4.65,
-                "steps": [{"cx": 520, "cy": 120}]
-        },
-        "norway": {
-                "rx": 1.10,
-                "ry": 4.50,
-                "steps": [{"cx": 535, "cy": 82}]
-        },
-        [...]
-        "hawaii": {
-                "rx": 0.36,
-                "ry": 1.17,
-                "bx": true,
-                "steps": [{"cx": 65, "cy": 197}]
-        },
-        "america": {
-                "rx": 0.30,
-                "ry": 6.26,
-                "steps": [{"cx": 320, "cy": 276}, {"cx": 192, "cy": 146}]
-        },
-        [...]
-}
+```yaml
+---
+france:
+  rx:  0.84
+  ry: -1.63
+  steps:
+    - cx: 520
+      cy: 120
+norway:
+  rx: 1.10
+  ry: -1.78
+  steps:
+    - cx: 535
+      cy: 82
+[...]
+hawaii:
+  rx: 0.36
+  ry: 1.17
+  bx: true
+  steps:
+    - cx: 65
+      cy: 197
+america:
+  rx: 0.30
+  ry: -0.02
+  steps:
+    - cx: 320
+      cy: 276
+    - cx: 192
+      cy: 146
 ```
 
 For each destination, `rx` and `ry` are the 3D Euler rotation angles to reach
@@ -183,37 +177,36 @@ anyway...  The `bx` parameter indicates that the X axis boundary of the texture
 must be crossed. It is implemented to the bare minimum and will probably not
 work with a backward rotation.
 
-### `{{route}}.json`
+### `{{route}}.yml`
 
 This file contains a list of actions to take during the travel.
 
-```json
-[
-	{
-		"clazz": "Slider",
-		"args": ["title"]
-	},
-	{
-		"clazz": "Globe"
-	},
-	{
-		"clazz": "EarthWalker",
-		"args": {"destination": "france", "wait": 0, "duration": 1000}
-	},
-	{
-		"clazz": "Slider",
-		"args": ["verne", "red_herring", "me"]
-	},
-	{
-		"clazz": "EarthWalker",
-		"args": {"destination": "norway", "wait": 2000, "duration": 300}
-	},
-	{
-		"clazz": "Slider",
-		"args": ["norway", "principle"]
-	},
-	[...]
-]
+```yaml
+---
+- clazz: Slider
+  args:
+    - zenika-title
+- clazz: Globe
+- clazz: EarthWalker
+  args:
+    destination: france
+    wait: 0
+    duration: 1000
+- clazz: Slider
+  args:
+    - verne
+    - red_herring
+    - me
+- clazz: EarthWalker
+  args:
+    destination: norway
+    wait: 2000
+    duration: 300
+- clazz: Slider
+  args:
+    - norway
+    - principle
+[...]
 ```
 
 The `clazz` field contains the class name of the action to use, and `args`
