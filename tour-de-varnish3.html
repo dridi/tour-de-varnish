@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tour de Varnish</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="js/three-r66.min.js"></script>
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/tour-de-varnish.min.js"></script>
+    <script type="text/javascript">
+      var context = {};
+
+      $(window).load(function () {
+        $(window).on("beforeunload", endJourney);
+        $.getJSON('data/destinations.json').then(function(data) {
+          context.destinations = data;
+          return $.getJSON('data/tour-de-varnish3.json');
+        }).then(function(data) {
+          context.route = data;
+          var stage = new Stage(context);
+          $(window).on('resize', stage.resize);
+          stage.begin();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <img id="world_map" src="img/earth.jpg" />
+    <svg
+      id="slides" viewBox="0 0 800 600"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+      <defs>
+        <path
+          id="title_path"
+          d="M 140, 300
+             a 260,260 0 1,0  520,0
+             a 260,260 0 1,0 -520,0" />
+    
+        <clipPath id="me_path">
+          <rect x="0" y="220" width="200" height="290" />
+        </clipPath>
+    
+        <clipPath id="plasma_path">
+          <circle cx="50%" cy="50%" r="170" />
+        </clipPath>
+    
+        <marker
+          id="arrow-start"
+          markerWidth="13" markerHeight="13"
+          refx="2" refy="7" orient="auto">
+          <path d="M8,2 L8,13 L2,7 L8,2" />
+        </marker>
+    
+        <marker
+          id="arrow-end"
+          markerWidth="13" markerHeight="13"
+          refx="2" refy="7" orient="auto">
+          <path d="M2,2 L2,13 L8,7 L2,2" />
+        </marker>
+    
+        <g id="client_laptop">
+          <rect x="20" y="0" width="80" height="40" />
+          <rect
+            x="54" y="40"
+            width="80" height="25"
+            transform="skewX(-40)" />
+        </g>
+    
+        <g id="varnish_process">
+          <rect x="250" y="40" width="300" height="520" rx="15" ry="15" />
+          <text x="320" y="70">varnishd</text>
+        </g>
+    
+        <g id="backend_process">
+          <rect x="600" y="80" width="150" height="200" rx="15" ry="15" />
+          <text x="620" y="110">backend</text>
+        </g>
+    
+        <g id="streaming_thread">
+          <rect x="0" y="0" width="80" height="80" rx="5" ry="5" />
+          <image
+            xlink:href="img/progress-streaming.gif"
+            x="-72" y="18" width="64" height="44"
+            transform="scale(-1,1)" />
+        </g>
+    
+        <g id="waiting_thread">
+          <rect x="0" y="0" width="80" height="80" rx="5" ry="5" />
+          <image
+            xlink:href="img/progress-waiting.gif"
+            x="8" y="8" width="64" height="64" />
+        </g>
+    
+        <g id="threading">
+          <use xlink:href="#client_laptop" x="40" y="140" />
+          <use xlink:href="#client_laptop" x="40" y="270" />
+          <use xlink:href="#client_laptop" x="40" y="400" />
+          <use xlink:href="#varnish_process" x="0" y="0" />
+          <use xlink:href="#backend_process" x="0" y="0" />
+          <text x="80" y="170">c1</text>
+          <text x="80" y="300">c2</text>
+          <text x="80" y="430">c3</text>
+        </g>
+      </defs>
+    
+      <style>
+        <![CDATA[
+          .threading line {
+            stroke: black;
+            marker-start: url(#arrow-start);
+            marker-end:   url(#arrow-end);
+          }
+        ]]>
+      </style>
+    
+      <!-- tour de Varnish -->
+    
+      <g id="title" class="title">
+        <image xlink:href="img/community.png" x="25%" y="25%" width="50%" height="50%"/>
+        <text>
+          <textPath xlink:href="#title_path">
+            Le tour de Varnish en 30 minutes.
+          </textPath>
+          <animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="10s"
+            type="rotate"
+            from="0 400 300"
+            to="360 400 300"
+            repeatCount="indefinite" />
+        </text>
+      </g>
+    
+      <g id="verne">
+        <text x="100" y="45%">« Si Jules Verne avait imaginé le Web,</text>
+        <text x="100" y="50%">on trouverait Varnish dans son roman. »</text>
+        <text x="550" y="60%" style="font-style: italic">Dridi B.</text>
+      </g>
+    
+      <g id="red_herring" class="xkcd">
+        <image xlink:href="img/working_for_google.png" x="5%" y="20%" width="90%" height="50%"/>
+        <rect x="48"  y="186" width="147" height="78" />
+        <rect x="206" y="186" width="247" height="134" />
+        <rect x="580" y="186" width="173" height="35" />
+        <rect x="605" y="221" width="148" height="50" />
+        <rect x="670" y="271" width="83"  height="20" />
+        <rect x="660" y="291" width="93"  height="50" />
+        <text x="80" y="260">Et donc ?</text>
+        <text y="190">
+          <tspan x="220" dy="20">C'est quand meme une super</tspan>
+          <tspan x="220" dy="20">distinction pour Varnish </tspan>
+          <tspan x="220" dy="20">Software et a l'echelle</tspan>
+          <tspan x="220" dy="20">europeene ! On parle de plus</tspan>
+          <tspan x="220" dy="20">en plus de Varnish un peu</tspan>
+          <tspan x="220" dy="20">partout en ce moment.</tspan>
+        </text>
+        <text x="585" y="215">C'est quoi Varnish ?</text>
+        <text x="660" y="270">Hum...</text>
+      </g>
+    
+      <g id="me">
+        <image
+          xlink:href="img/crazy_straws.png"
+          x="-360" y="-660" width="800" height="1600"
+          clip-path="url(#me_path)" />
+        <image xlink:href="img/troll-face.png" x="30" y="100" width="30%" height="30%"/>
+        <text x="30" y="110">A propos de moi</text>
+    
+        <image xlink:href="img/znk.png" x="250" y="80" width="160" height="120"/>
+        <text y="70">
+          <tspan x="410" dy="40">Consultant</tspan>
+          <tspan x="410" dy="40">Formateur</tspan>
+          <tspan x="410" dy="40">Rédacteur</tspan>
+        </text>
+    
+        <image xlink:href="img/varnish-cache.png" x="250" y="250" width="160" height="120"/>
+        <text y="240">
+          <tspan x="410" dy="40">Conseil/Support</tspan>
+          <tspan x="410" dy="40">Formateur certifiant</tspan>
+          <tspan x="410" dy="40">Contributeur</tspan>
+        </text>
+    
+        <image xlink:href="img/Fedora_logo.png" x="250" y="420" width="160" height="120"/>
+        <text y="410">
+          <tspan x="410" dy="40">Fanboi Linux</tspan>
+          <tspan x="410" dy="40">Fedora Packager</tspan>
+          <tspan x="410" dy="40">Editor InfoQ FR</tspan>
+        </text>
+      </g>
+    
+      <g id="norway">
+        <image xlink:href="img/red-herring.png" x="10%" y="10%" width="40%" height="20%"/>
+        <image xlink:href="img/v-s.png"         x="25%" y="35%" width="50%" height="25%"/>
+        <image xlink:href="img/bsdphk.png"      x="65%" y="60%" width="30%" height="30%"/>
+      </g>
+    
+      <g id="principle">
+        <image xlink:href="img/httpcachemiss.png" x="150" y="110" width="507" height="136"/>
+        <image xlink:href="img/httpcachehit.png"  x="150" y="356" width="507" height="136"/>
+      </g>
+    
+      <g id="freebsd">
+        <image xlink:href="img/beastie.png" x="65%" y="10%" width="178" height="196"/>
+        <text y="120">
+          <tspan x="250" dy="30">pkg_add -r varnish</tspan>
+          <tspan x="250" dy="40">pkg install varnish</tspan>
+        </text>
+      </g>
+    
+      <g id="linux">
+        <use xlink:href="#freebsd" x="0" y="0"/>
+    
+        <image
+          xlink:href="img/tux.png"
+          x="0" y="60%" width="156" height="180"
+          transform="translate(200, 0) scale(-1, 1)"/>
+        <text y="330">
+          <tspan x="250" dy="30">yum install varnish</tspan>
+          <tspan x="250" dy="40">aptitude install varnish</tspan>
+          <tspan x="250" dy="30">apt-get install varnish</tspan>
+          <tspan x="250" dy="40">zypper install varnish</tspan>
+          <tspan x="250" dy="40">pacman -S varnish</tspan>
+          <tspan x="250" dy="40">emerge varnish</tspan>
+        </text>
+      </g>
+    
+      <g id="windows">
+        <g style="fill: #00adef" transform="translate(305, 225)">
+          <rect x="10"  y="10" width="80" height="60"/>
+          <rect x="100" y="10" width="80" height="60"/>
+          <rect x="10"  y="80" width="80" height="60"/>
+          <rect x="100" y="80" width="80" height="60"/>
+          <text style="fill: black" transform="translate(30, 40)">
+            <tspan x="10"  y="10">W</tspan>
+            <tspan x="100" y="10">T</tspan>
+            <tspan x="10"  y="80">F</tspan>
+            <tspan x="100" y="80">?</tspan>
+          </text>
+        </g>
+        <image xlink:href="img/virtualbox.png"      x="100" y="60" width="128" height="131"/>
+        <image xlink:href="img/vmware_Iphone01.png" x="560" y="60" width="150" height="112"/>
+        <image xlink:href="img/logo_vagrant.png"    x="276" y="488" width="248" height="64"/>
+      </g>
+    
+      <g id="package">
+        <text y="110" class="code">
+          <tspan x="120" dy="30">$ rpm -ql varnish | grep bin</tspan>
+          <tspan x="120" dy="40">/usr/bin/varnishadm</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishhist</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishlog</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishncsa</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishreplay</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishsizes</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishstat</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishtest</tspan>
+          <tspan x="120" dy="30">/usr/bin/varnishtop</tspan>
+          <tspan x="120" dy="30">/usr/sbin/varnish_reload_vcl</tspan>
+          <tspan x="120" dy="30">/usr/sbin/varnishd</tspan>
+        </text>
+      </g>
+    
+      <g id="vcl">
+        <text x="130" y="50">VCL - Varnish Configuration Language</text>
+        <text y="150">
+          <tspan x="60" dy="40">• Contient la politique de cache</tspan>
+          <tspan x="60" dy="40">• Domain Specific Language (DSL)</tspan>
+          <tspan x="60" dy="40">• Proche du Perl (connu de nos admins ;)</tspan>
+          <tspan x="60" dy="40">• Transformé en C puis compilé</tspan>
+          <tspan x="60" dy="40">• Modifications à chaud</tspan>
+          <tspan x="60" dy="40">• Expose un automate fini</tspan>
+          <tspan x="60" dy="40">• Propose des règles par défaut</tspan>
+        </text>
+      </g>
+    
+      <g id="snippet">
+        <text x="130" y="50">VCL - Varnish Configuration Language</text>
+        <text y="150" class="code" xml:space="preserve">
+          <tspan x="60" dy="30">sub vcl_recv {                 </tspan>
+          <tspan x="60" dy="30">  if (req.url ~ "^/admin") {   </tspan>
+          <tspan x="60" dy="30">    return (pass);             </tspan>
+          <tspan x="60" dy="30">  }                            </tspan>
+          <tspan x="60" dy="30">}                              </tspan>
+          <tspan x="60" dy="30">                               </tspan>
+          <tspan x="60" dy="30">sub vcl_deliver {              </tspan>
+          <tspan x="60" dy="30">  unset resp.http.X-Varnish;   </tspan>
+          <tspan x="60" dy="30">  unset resp.http.X-Powered-By;</tspan>
+          <tspan x="60" dy="30">  unset resp.http.X-Generator; </tspan>
+          <tspan x="60" dy="30">}                              </tspan>
+        </text>
+      </g>
+    
+      <g id="state-machine">
+        <text x="130" y="50">VCL - Varnish Configuration Language</text>
+        <image xlink:href="img/vcl.png" x="182" y="60" width="436" height="538"/>
+      </g>
+    
+      <g id="backend">
+        <text x="200" y="50">Back-ends &amp; ...</text>
+        <text y="100" class="code" xml:space="preserve">
+          <tspan x="60" dy="30">backend www {                 </tspan>
+          <tspan x="60" dy="30">  .host = "www.example.com";  </tspan>
+          <tspan x="60" dy="30">  .port = "http";             </tspan>
+          <tspan x="60" dy="30">  .connect_timeout = 1s;      </tspan>
+          <tspan x="60" dy="30">  .first_byte_timeout = 5s;   </tspan>
+          <tspan x="60" dy="30">  .between_bytes_timeout = 2s;</tspan>
+          <tspan x="60" dy="30">  .probe = {                  </tspan>
+          <tspan x="60" dy="30">    .url = "/health-check";   </tspan>
+          <tspan x="60" dy="30">    .timeout = 0.3s;          </tspan>
+          <tspan x="60" dy="30">    .window = 8;              </tspan>
+          <tspan x="60" dy="30">    .threshold = 3;           </tspan>
+          <tspan x="60" dy="30">    .initial = 3;             </tspan>
+          <tspan x="60" dy="30">  }                           </tspan>
+          <tspan x="60" dy="30">}                             </tspan>
+        </text>
+      </g>
+    
+      <g id="virtualhost">
+        <text x="200" y="50">Back-ends &amp; Virtual Hosts</text>
+        <text y="100" class="code" xml:space="preserve">
+          <tspan x="60" dy="30">backend www {                     </tspan>
+          <tspan x="60" dy="30">  .host = "projet-prod-www";      </tspan>
+          <tspan x="60" dy="30">  # first => default              </tspan>
+          <tspan x="60" dy="30">}                                 </tspan>
+          <tspan x="60" dy="30">                                  </tspan>
+          <tspan x="60" dy="30">backend static {                  </tspan>
+          <tspan x="60" dy="30">  .host = "projet-prod-static";   </tspan>
+          <tspan x="60" dy="30">}                                 </tspan>
+          <tspan x="60" dy="30">                                  </tspan>
+          <tspan x="60" dy="30">sub vcl_recv {                    </tspan>
+          <tspan x="60" dy="30">  if (req.http.Host               </tspan>
+          <tspan x="60" dy="30">        == "static.example.com") {</tspan>
+          <tspan x="60" dy="30">    set req.backend = static;     </tspan>
+          <tspan x="60" dy="30">  }                               </tspan>
+          <tspan x="60" dy="30">}                                 </tspan>
+        </text>
+      </g>
+    
+      <g id="cache">
+        <text y="110" xml:space="preserve">
+          <tspan x="60" dy="40">• Varnish gère:</tspan>
+          <tspan x="60" dy="40">   ◦ le TTL</tspan>
+          <tspan x="60" dy="40">   ◦ les variantes (entête Vary)</tspan>
+          <tspan x="60" dy="40">   ◦ le gzip</tspan>
+          <tspan x="60" dy="80">• Le VCL par défaut ne cache pas:</tspan>
+          <tspan x="60" dy="40">   ◦ les cookies</tspan>
+          <tspan x="60" dy="40">   ◦ les authentifications</tspan>
+          <tspan x="60" dy="40">   ◦ les méthodes autres que GET ou HEAD</tspan>
+        </text>
+      </g>
+    
+      <g id="invalidation">
+        <image xlink:href="img/The-Purge-Poster.jpg" x="0" y="10" width="390" height="580"/>
+        <text x="440" y="50">Cache => Invalidation</text>
+        <text y="100" xml:space="preserve">
+          <tspan x="400" dy="40">• purge</tspan>
+          <tspan x="400" dy="40">   ◦ via le VCL</tspan>
+          <tspan x="400" dy="40">   ◦ immédiat</tspan>
+          <tspan x="400" dy="40">   ◦ une URL à la fois</tspan>
+          <tspan x="400" dy="80">• ban</tspan>
+          <tspan x="400" dy="40">   ◦ via le VCL</tspan>
+          <tspan x="400" dy="40">   ◦ via la console d'admin</tspan>
+          <tspan x="400" dy="40">   ◦ différé</tspan>
+          <tspan x="400" dy="40">   ◦ critères plus variés</tspan>
+          <tspan x="400" dy="40">   ◦ invalide des régions</tspan>
+        </text>
+      </g>
+    
+      <g id="grace">
+        <image xlink:href="img/puss_n_boots.jpg" x="0" y="308" width="300" height="292"/>
+        <text x="280" y="100">Accorder un sursis</text>
+        <text y="160" xml:space="preserve">
+          <tspan x="60" dy="40">grace</tspan>
+          <tspan x="60" dy="40">   • TTL étendu</tspan>
+          <tspan x="60" dy="40">   • Sert du contenu périmé</tspan>
+        </text>
+        <text y="400" xml:space="preserve">
+          <tspan x="350" dy="40">Utile en cas de:</tspan>
+          <tspan x="350" dy="40">   • défaillance d'un backend</tspan>
+          <tspan x="350" dy="40">   • redémarrage d'un backend</tspan>
+          <tspan x="350" dy="40">   • rafraîchissement long</tspan>
+        </text>
+      </g>
+    
+      <g id="hawaii">
+        <image xlink:href="img/hawaii.jpg" x="0" y="0" width="800" height="600"/>
+        <image xlink:href="img/troll-face-dance.gif" x="50" y="350" width="200" height="200"/>
+      </g>
+    
+      <g id="directors">
+        <text x="240" y="50">Director != Load Balancer</text>
+        <text y="100" xml:space="preserve">
+          <tspan x="60" dy="40">• Maximise les chances d'obtenir une ressource</tspan>
+          <tspan x="60" dy="40">• Plusieurs stratégies:</tspan>
+          <tspan x="60" dy="40">   ◦ random</tspan>
+          <tspan x="60" dy="40">   ◦ round robin</tspan>
+          <tspan x="60" dy="40">   ◦ fallback</tspan>
+          <tspan x="60" dy="40">   ◦ client (sticky)</tspan>
+          <tspan x="60" dy="40">   ◦ hash</tspan>
+          <tspan x="60" dy="40">   ◦ DNS</tspan>
+          <tspan x="60" dy="40">• Peut servir de répartiteur de charge</tspan>
+        </text>
+      </g>
+    
+      <g id="fallback">
+        <text x="200" y="50">Director != Load Balancer</text>
+        <text y="100" class="code" xml:space="preserve">
+          <tspan x="60" dy="30">backend www1 {                </tspan>
+          <tspan x="60" dy="30">  .host = "projet-prod-www-1";</tspan>
+          <tspan x="60" dy="30">}                             </tspan>
+          <tspan x="60" dy="30">backend www2 {                </tspan>
+          <tspan x="60" dy="30">  .host = "projet-prod-www-2";</tspan>
+          <tspan x="60" dy="30">}                             </tspan>
+          <tspan x="60" dy="30">backend www3 {                </tspan>
+          <tspan x="60" dy="30">  .host = "projet-prod-www-3";</tspan>
+          <tspan x="60" dy="30">}                             </tspan>
+          <tspan x="60" dy="30">                              </tspan>
+          <tspan x="60" dy="30">director www fallback {       </tspan>
+          <tspan x="60" dy="30">  { .backend = www1; }        </tspan>
+          <tspan x="60" dy="30">  { .backend = www2; }        </tspan>
+          <tspan x="60" dy="30">  { .backend = www3; }        </tspan>
+          <tspan x="60" dy="30">}                             </tspan>
+        </text>
+      </g>
+    
+      <g id="new-york">
+        <image xlink:href="img/varnish-cache.png" x="175" y="75" width="200" height="200"/>
+        <text style="font-size: 200px;">
+          <tspan x="445" y="235" style="fill:red">♥</tspan>
+          <tspan x="195" y="465">N</tspan>
+          <tspan x="445" y="465">Y</tspan>
+        </text>
+      </g>
+    
+      <g id="inline-c">
+        <text x="230" y="100">C{ extend_varnish(); }C</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Insérer du C dans le VCL</tspan>
+          <tspan x="60" dy="40">   • pour accéder aux entrailles de Varnish</tspan>
+          <tspan x="60" dy="40">   • rappel : le VCL est transformé en C</tspan>
+          <tspan x="60" dy="80">Désuet depuis Varnish 3</tspan>
+          <tspan x="60" dy="40">   • architecture modulaire</tspan>
+          <tspan x="60" dy="40">   • VMOD => Varnish Module</tspan>
+        </text>
+      </g>
+    
+      <g id="vmods">
+        <text x="370" y="100">VMOD</text>
+        <text y="150" class="code" xml:space="preserve">
+          <tspan x="40" dy="30">import std;                             </tspan>
+          <tspan x="40" dy="30">                                        </tspan>
+          <tspan x="40" dy="30">sub vcl_error {                         </tspan>
+          <tspan x="40" dy="30">  synthetic std.fileread("/etc/varnish/"</tspan>
+          <tspan x="40" dy="30">      + obj.status + ".html");          </tspan>
+          <tspan x="40" dy="30">}                                       </tspan>
+        </text>
+        <text y="400" xml:space="preserve">
+          <tspan x="40" dy="40">Il en existe d'autres :</tspan>
+          <tspan x="40" dy="40">   • https://www.varnish-cache.org/vmods</tspan>
+          <tspan x="40" dy="40">   • support commercial possible pour certains</tspan>
+        </text>
+      </g>
+    
+      <g id="varnishadm">
+        <text x="320" y="100">varnishadm</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Un shell pour contrôler Varnish</tspan>
+          <tspan x="60" dy="40">   • diagnostics</tspan>
+          <tspan x="60" dy="40">   • tuning</tspan>
+          <tspan x="60" dy="40">   • gestion du VCL</tspan>
+          <tspan x="60" dy="40">   • debug (caché =)</tspan>
+          <tspan x="60" dy="80">Certaines opérations sont scriptables !</tspan>
+        </text>
+      </g>
+    
+      <g id="vac">
+        <text x="230" y="100">One tool to rule them all</text>
+        <image xlink:href="img/vac-laptop.png" x="133" y="178" width="534" height="344"/>
+      </g>
+    
+      <g id="logs">
+        <text x="180" y="100">Journal de bord du capitaine</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Constat sur les logs:</tspan>
+          <tspan x="60" dy="40">   • personne ne les lit/exploite...</tspan>
+          <tspan x="60" dy="40">   • ... sauf quand un problème survient</tspan>
+          <tspan x="60" dy="40">   • souvent trop/pas assez verbeuses</tspan>
+          <tspan x="60" dy="40">   • problèmes de perfs/espace disque</tspan>
+          <tspan x="60" dy="80">La solution Varnish:</tspan>
+          <tspan x="60" dy="40">   • des logs binaires en mémoire</tspan>
+          <tspan x="60" dy="40">   • des outils pour les exploiter</tspan>
+        </text>
+      </g>
+    
+      <g id="varnishlog">
+        <text x="180" y="100">Journal de bord du capitaine</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Deux types de logs:</tspan>
+          <tspan x="60" dy="40">   • des compteurs</tspan>
+          <tspan x="60" dy="40">   • des événements</tspan>
+          <tspan x="60" dy="80">Les outils:</tspan>
+          <tspan x="60" dy="40">   • varnishlog</tspan>
+          <tspan x="60" dy="40">   • varnishstat</tspan>
+          <tspan x="60" dy="40">   • varnishncsa</tspan>
+          <tspan x="60" dy="40">   • varnishhist</tspan>
+          <tspan x="60" dy="40">   • ...</tspan>
+        </text>
+      </g>
+    
+      <!-- détour Varnish 4 -->
+    
+      <g id="title4" class="title">
+        <image xlink:href="img/superbunny.png" x="25%" y="25%" width="50%" height="50%"/>
+        <text>
+          <textPath xlink:href="#title_path">
+            Le détour Varnish 4 en 15 minutes.
+          </textPath>
+          <animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="10s"
+            type="rotate"
+            from="0 400 300"
+            to="360 400 300"
+            repeatCount="indefinite" />
+        </text>
+      </g>
+    
+      <g id="varnish3">
+        <text x="200" y="100">Quoi de neuf dans Varnish 3 ?</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">• Des améliorations du VCL</tspan>
+          <tspan x="60" dy="40">• L'invalidation avec ban en plus de la purge</tspan>
+          <tspan x="60" dy="40">• L'apparition des modules</tspan>
+          <tspan x="60" dy="40">• La (dé)compression gzip à la volée</tspan>
+          <tspan x="60" dy="40">• Un support partiel du streaming</tspan>
+        </text>
+      </g>
+    
+      <g id="not_bad">
+        <use xlink:href="#varnish3" x="0" y="0"/>
+        <image xlink:href="img/not_bad.png" x="0" y="150" width="800" height="450"/>
+      </g>
+    
+      <g id="varnish4-guru">
+        <text x="200" y="100">Quoi de neuf dans Varnish 4 ?</text>
+        <image xlink:href="img/guru-meditation.png" x="296" y="150" width="208" height="303"/>
+      </g>
+    
+      <g id="vcl4">
+        <text x="200" y="100">Les changements dans le VCL</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">• Un marqueur "vcl 4.0"</tspan>
+          <tspan x="60" dy="40">• Des étapes renommées</tspan>
+          <tspan x="60" dy="40">• De nouvelles étapes</tspan>
+          <tspan x="60" dy="40">• De nouvelles fonctions</tspan>
+          <tspan x="60" dy="40">• Des objets (comme dans orienté objet)</tspan>
+          <tspan x="60" dy="40">• Un nouveau module : vmod_directors</tspan>
+        </text>
+      </g>
+    
+      <g id="directors4">
+        <text x="290" y="50">vmod_directors</text>
+        <text y="100" class="code" xml:space="preserve">
+          <tspan x="60" dy="30"># varnish 3                      </tspan>
+          <tspan x="60" dy="30">director www fallback {          </tspan>
+          <tspan x="60" dy="30">  { .backend = www1; }           </tspan>
+          <tspan x="60" dy="30">  { .backend = www2; }           </tspan>
+          <tspan x="60" dy="30">  { .backend = www3; }           </tspan>
+          <tspan x="60" dy="30">}                                </tspan>
+          <tspan x="60" dy="30">                                 </tspan>
+          <tspan x="60" dy="30"># varnish 4                      </tspan>
+          <tspan x="60" dy="30">sub vcl_init {                   </tspan>
+          <tspan x="60" dy="30">  new www = directors.fallback();</tspan>
+          <tspan x="60" dy="30">  www.add_backend(www1);         </tspan>
+          <tspan x="60" dy="30">  www.add_backend(www2);         </tspan>
+          <tspan x="60" dy="30">  www.add_backend(www3);         </tspan>
+          <tspan x="60" dy="30">}                                </tspan>
+        </text>
+      </g>
+    
+      <g id="streaming">
+        <text x="240" y="100">Du streaming partiel ?</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Pas de màj concurrentes d'un "objet" du cache</tspan>
+          <tspan x="60" dy="40">   • latence pendant le rafraîchissement d'un objet</tspan>
+          <tspan x="60" dy="40">   • streaming possible pour le premier client</tspan>
+          <tspan x="60" dy="40">   • les clients suivants doivent attendre</tspan>
+          <tspan x="60" dy="80">Contournable</tspan>
+          <tspan x="60" dy="40">   • par le mécanisme de grace</tspan>
+          <tspan x="60" dy="40">   • par un hack en VCL</tspan>
+        </text>
+      </g>
+    
+      <g id="threading3" class="threading">
+        <use xlink:href="#threading" x="0" y="0"/>
+    
+        <text x="450" y="70">v3</text>
+    
+        <use xlink:href="#streaming_thread" x="360" y="130"/>
+        <use xlink:href="#waiting_thread"   x="360" y="260"/>
+        <use xlink:href="#waiting_thread"   x="360" y="390"/>
+    
+        <line x1="170" x2="330" y1="170" y2="170"/>
+        <line x1="170" x2="330" y1="300" y2="300"/>
+        <line x1="170" x2="330" y1="430" y2="430"/>
+    
+        <line x1="470" x2="570" y1="170" y2="170"/>
+      </g>
+    
+      <g id="threading4" class="threading">
+        <use xlink:href="#threading" x="0" y="0"/>
+    
+        <text x="450" y="70">v4</text>
+    
+        <use xlink:href="#streaming_thread" x="290" y="130"/>
+        <use xlink:href="#streaming_thread" x="430" y="130"/>
+        <use xlink:href="#streaming_thread" x="290" y="260"/>
+        <use xlink:href="#streaming_thread" x="290" y="390"/>
+    
+        <line x1="170" x2="260" y1="170" y2="170"/>
+        <line x1="170" x2="260" y1="300" y2="300"/>
+        <line x1="170" x2="260" y1="430" y2="430"/>
+    
+        <line x1="530" x2="570" y1="170" y2="170"/>
+    
+        <line x1="390" x2="410" y1="170" y2="170"/>
+        <line x1="390" x2="410" y1="250" y2="230"/>
+        <line x1="390" x2="460" y1="370" y2="230"/>
+      </g>
+    
+      <g id="streaming4">
+        <text x="150" y="100">Un support complet du streaming ?</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Pas de màj concurrentes d'un "objet" du cache</tspan>
+          <tspan x="60" dy="40">   • des threads "clients" et "backends"</tspan>
+          <tspan x="60" dy="40">   • un thread "backend" se charge de la màj</tspan>
+          <tspan x="60" dy="40">   • streaming possible pour les threads "clients"</tspan>
+          <tspan x="60" dy="80">Bénéfices ?</tspan>
+          <tspan x="60" dy="40">   • une architecture encore plus réactive</tspan>
+          <tspan x="60" dy="40">   • suppression des latences d'un "cache miss"</tspan>
+          <tspan x="60" dy="40">   • améliore la mise en cascade de caches</tspan>
+        </text>
+      </g>
+    
+      <g id="security">
+        <text x="225" y="100">La sécurité dans Varnish 4</text>
+        <image xlink:href="img/guru-meditation.png" x="296" y="150" width="208" height="303"/>
+        <image
+          xlink:href="img/plasma.gif"
+          x="175" y="130" width="450" height="340"
+          opacity="0.5" clip-path="url(#plasma_path)" />
+      </g>
+    
+      <g id="security4">
+        <text x="225" y="100">La sécurité dans Varnish 4</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Architecture de varnishd</tspan>
+          <tspan x="60" dy="40">   • deux processus "management" et "cache"</tspan>
+          <tspan x="60" dy="40">   • paramètres et VCL modifiables à chaud</tspan>
+          <tspan x="60" dy="40">   • VCL transformé en C puis compilé</tspan>
+          <tspan x="60" dy="40">   • pas de chiffrement (SSL/TLS)</tspan>
+          <tspan x="60" dy="80">Nouveautés</tspan>
+          <tspan x="60" dy="40">   • paramètres en lecture seule</tspan>
+          <tspan x="60" dy="40">   • C{ inline_c(); }C désactivé par défaut</tspan>
+        </text>
+      </g>
+    
+      <g id="vmod4">
+        <text x="225" y="100">Les modules dans Varnish 4</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">• Nouveaux types (IP, BACKEND, BLOB...)</tspan>
+          <tspan x="60" dy="40">• Des objets manipulables dans le VCL</tspan>
+          <tspan x="60" dy="40">• De nouveaux points d'entrée</tspan>
+          <tspan x="60" dy="40">   • delivery pipeline</tspan>
+          <tspan x="60" dy="40">   • fetch processors</tspan>
+          <tspan x="60" dy="40">• Gestion de la documentation</tspan>
+        </text>
+      </g>
+    
+      <g id="logs4">
+        <text x="250" y="100">Les logs dans Varnish 4</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">• Nouvelle architecture</tspan>
+          <tspan x="60" dy="40">   • Meilleures performances (zero copy)</tspan>
+          <tspan x="60" dy="40">• Transactions et groupes de transactions</tspan>
+          <tspan x="60" dy="40">• Un langage de requêtes</tspan>
+          <tspan x="60" dy="40">• Filtrage des logs</tspan>
+        </text>
+      </g>
+    
+      <g id="transactions">
+        <text x="250" y="100">Les logs dans Varnish 4</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Transactions</tspan>
+          <tspan x="60" dy="40">• requête du client</tspan>
+          <tspan x="60" dy="40">• requête au backend</tspan>
+          <tspan x="60" dy="40">• sous-requête ESI</tspan>
+          <tspan x="60" dy="40">• session</tspan>
+        </text>
+        <text y="150" xml:space="preserve">
+          <tspan x="400" dy="40">Groupes de transactions</tspan>
+          <tspan x="400" dy="40">• par VXID</tspan>
+          <tspan x="400" dy="40">• par requête</tspan>
+          <tspan x="400" dy="40">• par session</tspan>
+          <tspan x="400" dy="40">• brut (raw)</tspan>
+        </text>
+        <text x="110" y="480">varnishlog -g {vxid | request | session | raw}</text>
+      </g>
+    
+      <g id="query-language">
+        <text x="250" y="100">Les logs dans Varnish 4</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">Langage de requêtes</tspan>
+          <tspan x="60" dy="40">• comparaisons de chaînes</tspan>
+          <tspan x="60" dy="40">• comparaisons de nombres</tspan>
+          <tspan x="60" dy="40">• expressions régulières</tspan>
+          <tspan x="60" dy="40">• opérateurs logiques</tspan>
+          <tspan x="60" dy="40">• ...</tspan>
+        </text>
+        <text y="440" xml:space="preserve">
+          <tspan x="60" dy="40">-q 'ReqMethod eq "GET" and ReqUrl !~ "^/static"'</tspan>
+          <tspan x="60" dy="40">-q 'RespStatus &gt;= 200 and RespStatus &lt; 300'</tspan>
+        </text>
+      </g>
+    
+      <g id="varnish4">
+        <text x="200" y="100">Quoi de neuf dans Varnish 4 ?</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">• Des améliorations du VCL</tspan>
+          <tspan x="60" dy="40">• Une architecture encore plus réactive</tspan>
+          <tspan x="60" dy="40">• Un support complet du streaming</tspan>
+          <tspan x="60" dy="40">• Une sécurité accrue</tspan>
+          <tspan x="60" dy="40">• De nouveaux points d'extension pour les modules</tspan>
+          <tspan x="60" dy="40">   ◦ un nouveau vmod_directors</tspan>
+          <tspan x="60" dy="40">• Une refonte de la gestion des logs</tspan>
+        </text>
+      </g>
+    
+      <g id="not_bad4">
+        <use xlink:href="#varnish4" x="0" y="0"/>
+        <image xlink:href="img/not_bad4.png" x="0" y="150" width="800" height="450"/>
+      </g>
+    
+      <!-- fin du tour de Varnish -->
+    
+      <g id="speed">
+        <text x="240" y="100">Pourquoi c'est important</text>
+        <text y="150" xml:space="preserve">
+          <tspan x="60" dy="40">La vitesse compte:</tspan>
+          <tspan x="60" dy="40">   • la lenteur perçue fait perdre des visiteurs</tspan>
+          <tspan x="60" dy="40">   • perdre des visiteurs fait baisser les ventes</tspan>
+          <tspan x="60" dy="80">Varnish est rapide:</tspan>
+          <tspan x="60" dy="40">   • il diminue la charge des backends</tspan>
+          <tspan x="60" dy="40">   • il peut masquer les maintenances</tspan>
+          <tspan x="60" dy="40">   • la requête la plus rapide est celle qu'on ne fait pas</tspan>
+        </text>
+      </g>
+    
+      <g id="figures">
+        <image xlink:href="img/exit-rate-wikia.png" x="0" y="0" width="800" height="600"/>
+      </g>
+    
+      <g id="conclusion">
+        <text x="260" y="100">Varnish en 5 étapes</text>
+        <text y="150">
+          <tspan x="60" dy="40">• Cacher le contenu statique</tspan>
+          <tspan x="60" dy="40">• Configurer la compression</tspan>
+          <tspan x="60" dy="40">• Cacher le contenu semi-statique</tspan>
+          <tspan x="60" dy="40">• Automatiser l'invalidation du cache</tspan>
+          <tspan x="60" dy="40">• Améliorer les backends</tspan>
+        </text>
+      </g>
+    
+      <g id="achievement">
+        <use xlink:href="#conclusion" x="0" y="0"/>
+        <image xlink:href="img/achievementgen.png" x="82" y="420" width="636" height="120"/>
+      </g>
+    
+      <g id="features">
+        <text x="260" y="100">Autres fonctionnalités</text>
+        <text y="150">
+          <tspan x="60" dy="40">• Access Control Lists (ACL)</tspan>
+          <tspan x="60" dy="40">• Multi-tenancy</tspan>
+          <tspan x="60" dy="40">• Framework de test</tspan>
+          <tspan x="60" dy="40">• Edge Side Includes (ESI)</tspan>
+          <tspan x="60" dy="80">Et on trouve même des man pages ;)</tspan>
+        </text>
+      </g>
+    
+      <!-- zenika -->
+    
+      <g id="zenika-title">
+        <image
+          xlink:href="img/forkme_right_orange_ff7600.png"
+          x="660" y="0" width="140" height="140" />
+        <image xlink:href="img/znk.png" x="0"   y="79%" width="20%" height="20%"/>
+        <image xlink:href="img/v-s.png" x="64%" y="79%" width="40%" height="20%"/>
+        <use xlink:href="#title" x="0" y="0"/>
+      </g>
+    
+      <!-- breizhcamp -->
+    
+      <g id="breizhcamp-title">
+        <image xlink:href="img/breizhcamp.png" x="0" y="0" width="100%" height="100%"/>
+        <image
+          xlink:href="img/forkme_right_orange_ff7600.png"
+          x="660" y="0" width="140" height="140" />
+        <use xlink:href="#title" x="12.5%" y="12.5%" transform="scale(0.75,0.75)" />
+      </g>
+    
+      <g id="breizhcamp-feedback">
+        <image
+          xlink:href="img/breizhcamp-feedback.png"
+          x="0" y="0" width="100%" height="100%"/>
+      </g>
+    </svg>
+  </body>
+</html>
