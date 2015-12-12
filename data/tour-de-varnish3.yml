@@ -12,7 +12,7 @@
   args:
     - verne
     - red_herring
-    - me
+    - me-2013
 - clazz: EarthWalker
   args:
     destination: norway
