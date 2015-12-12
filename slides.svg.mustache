@@ -217,7 +217,7 @@
     <image xlink:href="img/logo_vagrant.png"    x="276" y="488" width="248" height="64"/>
   </g>
 
-  <g id="package">
+  <g id="package3">
     <text y="110" class="code">
       <tspan x="120" dy="30">$ rpm -ql varnish | grep bin</tspan>
       <tspan x="120" dy="40">/usr/bin/varnishadm</tspan>
@@ -226,6 +226,21 @@
       <tspan x="120" dy="30">/usr/bin/varnishncsa</tspan>
       <tspan x="120" dy="30">/usr/bin/varnishreplay</tspan>
       <tspan x="120" dy="30">/usr/bin/varnishsizes</tspan>
+      <tspan x="120" dy="30">/usr/bin/varnishstat</tspan>
+      <tspan x="120" dy="30">/usr/bin/varnishtest</tspan>
+      <tspan x="120" dy="30">/usr/bin/varnishtop</tspan>
+      <tspan x="120" dy="30">/usr/sbin/varnish_reload_vcl</tspan>
+      <tspan x="120" dy="30">/usr/sbin/varnishd</tspan>
+    </text>
+  </g>
+
+  <g id="package4">
+    <text y="110" class="code">
+      <tspan x="120" dy="30">$ rpm -ql varnish | grep bin</tspan>
+      <tspan x="120" dy="40">/usr/bin/varnishadm</tspan>
+      <tspan x="120" dy="30">/usr/bin/varnishhist</tspan>
+      <tspan x="120" dy="30">/usr/bin/varnishlog</tspan>
+      <tspan x="120" dy="30">/usr/bin/varnishncsa</tspan>
       <tspan x="120" dy="30">/usr/bin/varnishstat</tspan>
       <tspan x="120" dy="30">/usr/bin/varnishtest</tspan>
       <tspan x="120" dy="30">/usr/bin/varnishtop</tspan>
@@ -264,7 +279,7 @@
     </text>
   </g>
 
-  <g id="state-machine">
+  <g id="state-machine3">
     <text x="130" y="50">VCL - Varnish Configuration Language</text>
     <image xlink:href="img/vcl.png" x="182" y="60" width="436" height="538"/>
   </g>
@@ -289,7 +304,7 @@
     </text>
   </g>
 
-  <g id="virtualhost">
+  <g id="virtualhost3">
     <text x="200" y="50">Back-ends &amp; Virtual Hosts</text>
     <text y="100" class="code" xml:space="preserve">
       <tspan x="60" dy="30">backend www {                     </tspan>
@@ -361,7 +376,7 @@
     <image xlink:href="img/troll-face-dance.gif" x="50" y="350" width="200" height="200"/>
   </g>
 
-  <g id="directors">
+  <g id="directors3">
     <text x="240" y="50">Director != Load Balancer</text>
     <text y="100" xml:space="preserve">
       <tspan x="60" dy="40">• Maximise les chances d'obtenir une ressource</tspan>
@@ -376,7 +391,21 @@
     </text>
   </g>
 
-  <g id="fallback">
+  <g id="directors4">
+    <text x="240" y="50">Director != Load Balancer</text>
+    <text y="100" xml:space="preserve">
+      <tspan x="60" dy="40">• Maximise les chances d'obtenir une ressource</tspan>
+      <tspan x="60" dy="40">• Plusieurs stratégies:</tspan>
+      <tspan x="60" dy="40">   ◦ random</tspan>
+      <tspan x="60" dy="40">   ◦ round robin</tspan>
+      <tspan x="60" dy="40">   ◦ fallback</tspan>
+      <tspan x="60" dy="40">   ◦ hash (sticky, sharding...)</tspan>
+      <tspan x="60" dy="40">• Peut servir de répartiteur de charge</tspan>
+      <tspan x="60" dy="40">   ◦ Possibilité d'écrire le sien</tspan>
+    </text>
+  </g>
+
+  <g id="fallback3">
     <text x="200" y="50">Director != Load Balancer</text>
     <text y="100" class="code" xml:space="preserve">
       <tspan x="60" dy="30">backend www1 {                </tspan>
@@ -418,7 +447,7 @@
     </text>
   </g>
 
-  <g id="vmods">
+  <g id="vmods3">
     <text x="370" y="100">VMOD</text>
     <text y="150" class="code" xml:space="preserve">
       <tspan x="40" dy="30">import std;                             </tspan>
@@ -533,7 +562,7 @@
     </text>
   </g>
 
-  <g id="directors4">
+  <g id="directors3to4">
     <text x="290" y="50">vmod_directors</text>
     <text y="100" class="code" xml:space="preserve">
       <tspan x="60" dy="30"># varnish 3                      </tspan>

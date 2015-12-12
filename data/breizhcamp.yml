@@ -32,7 +32,7 @@
     - freebsd
     - linux
     - windows
-    - package
+    - package3
 - clazz: EarthWalker
   args:
     destination: india
@@ -41,7 +41,7 @@
 - clazz: Slider
   args:
     - vcl
-    - state-machine
+    - state-machine3
     - snippet
 - clazz: EarthWalker
   args:
@@ -51,7 +51,7 @@
 - clazz: Slider
   args:
     - backend
-    - virtualhost
+    - virtualhost3
 - clazz: EarthWalker
   args:
     destination: australia
@@ -77,8 +77,8 @@
     duration: 2000
 - clazz: Slider
   args:
-    - directors
-    - fallback
+    - directors3
+    - fallback3
 - clazz: EarthWalker
   args:
     destination: newYork
@@ -88,7 +88,7 @@
   args:
     - new-york
     - inline-c
-    - vmods
+    - vmods3
 - clazz: EarthWalker
   args:
     destination: groenland
@@ -126,7 +126,7 @@
   args:
     - vcl4
     - vmod4
-    - directors4
+    - directors3to4
 - clazz: EarthWalker
   args:
     destination: chad
