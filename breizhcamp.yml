@@ -1,4 +1,5 @@
 ---
-route: breizhcamp
-map:   earth.jpg
+route:  breizhcamp
+map:    earth.jpg
+legacy: true
 ---

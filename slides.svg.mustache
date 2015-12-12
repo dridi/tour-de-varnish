@@ -249,12 +249,17 @@
     </text>
   </g>
 
-  <g id="vcl">
+  <g id="vcl" xml:space="preserve">
     <text x="130" y="50">VCL - Varnish Configuration Language</text>
     <text y="150">
       <tspan x="60" dy="40">• Contient la politique de cache</tspan>
       <tspan x="60" dy="40">• Domain Specific Language (DSL)</tspan>
+{{#legacy}}
       <tspan x="60" dy="40">• Proche du Perl (connu de nos admins ;)</tspan>
+{{/legacy}}
+{{^legacy}}
+      <tspan x="60" dy="40">   ◦ manipule des messages HTTP</tspan>
+{{/legacy}}
       <tspan x="60" dy="40">• Transformé en C puis compilé</tspan>
       <tspan x="60" dy="40">• Modifications à chaud</tspan>
       <tspan x="60" dy="40">• Expose un automate fini</tspan>
