@@ -105,9 +105,7 @@ generated from YAML. Repeat after me: _"Json is not a hand-writing-friendly
 serialization format"_.
 
 ```bash
-$ make
-[...]
-$ firefox index.html
+$ make run
 ```
 
 You can first check that everything needed for the build is installed:

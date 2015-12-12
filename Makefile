@@ -10,7 +10,10 @@ FILES = $(MISC) $(PRESENTATIONS) $(JSON_DATA)
 
 all: $(FILES)
 
-.PHONY: clean env-check
+.PHONY: all clean env-check run
+
+run: all
+	firefox -private -new-window index.html
 
 env-check:
 	@which mustache >/dev/null 2>&1 || (echo "Missing mustache ruby gem" && exit 1)
