@@ -163,6 +163,12 @@ Earth = function(scene) {
 		return elapsed > (duration + 200);
 	};
 
+	this.setRotation = function(rotation) {
+		texture.needsUpdate = true;
+		sphere.rotation.x = rotation.x;
+		sphere.rotation.y = rotation.y;
+	};
+
 	this.rotate = function(rotation) {
 		texture.needsUpdate = true;
 		sphere.rotation.x += rotation.x;
@@ -186,7 +192,7 @@ Earth = function(scene) {
 Globe = function(context) {
 	var transition = '';
 
-	context.earth.rotate({x: -0.2, y: 0});
+	context.earth.setRotation({x: -0.2, y: 0});
 
 	this.animate = function() {
 		// TODO time-based speed
