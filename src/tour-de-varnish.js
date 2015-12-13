@@ -184,18 +184,20 @@ Earth = function(scene) {
  * This action makes the earth rotate on its Y axis.
  */
 Globe = function(context) {
-	var done = false;
+	var transition = '';
 
 	context.earth.rotate({x: -0.2, y: 0});
 
 	this.animate = function() {
 		// TODO time-based speed
 		context.earth.rotate({x: 0, y: 0.04});
-		return done ? 'next' : '';
+		return transition;
 	};
 
 	this.handler = function(keyboardEvent) {
-		done = keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32;
+		if (keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32) {
+			transition = 'next';
+		}
 	};
 }
 
@@ -342,14 +344,16 @@ Slider = function() {
  * This action basically waits until it gets bored. Is that even useful ?
  */
 Waiter = function(context) {
-	var bored = false;
+	var bored = '';
 
 	this.animate = function() {
-		return bored ? 'next' : '';
+		return bored;
 	};
 
 	this.handler = function(keyboardEvent) {
-		bored = keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32;
+		if (keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32) {
+			bored = 'next';
+		}
 	};
 }
 
