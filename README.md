@@ -119,7 +119,7 @@ All green !
 
 It contains several classes:
 * `Stage` : the orchestrator, it relies on actions
-  * `EarthWakker` : travels around the earth
+  * `EarthWalker` : travels around the earth
   * `Slider` : displays slides
   * ...
 * `Earth` : the 3D sphere
