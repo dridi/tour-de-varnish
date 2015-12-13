@@ -195,7 +195,13 @@ Globe = function(context) {
 	};
 
 	this.handler = function(keyboardEvent) {
-		if (keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32) {
+		if (keyboardEvent.type != 'keyup') {
+			return;
+		}
+		if (keyboardEvent.keyCode == 33) {
+			transition = 'prev';
+		}
+		if (keyboardEvent.keyCode == 34) {
 			transition = 'next';
 		}
 	};
