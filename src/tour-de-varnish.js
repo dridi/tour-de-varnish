@@ -417,13 +417,11 @@ Stage = function(context) {
 	};
 
 	var animate = function() {
-		if ( action && action.animate() == 'next' ) {
+		if (action.animate() == 'next') {
 			pickAction();
 		}
-		if (action) {
-			requestAnimationFrame(animate);
-		}
-		if (action && ! action.noRender) {
+		requestAnimationFrame(animate);
+		if (!action.noRender) {
 			renderer.render(scene, camera);
 		}
 	};
