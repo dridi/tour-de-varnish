@@ -387,18 +387,29 @@ Stage = function(context) {
 	scene = new THREE.Scene();
 	renderer = new THREE.CanvasRenderer();
 
-	current = 0;
+	current = -1;
 	context.earth = new Earth(scene);
 
 	$('body').append(renderer.domElement);
 
-	var pickAction = function() {
+	var pickIndex = function(transition) {
+		var index;
+		switch (transition) {
+			case 'next': index = current + 1; break;
+			case 'prev': index = current - 1; break;
+			default: throw new Error("unknown transition: " + transition);
+		}
+		return Math.max(0, Math.min(index, context.route.length - 1));
+	}
+
+	var pickAction = function(transition) {
 		var newAction = null;
-		if (current < context.route.length) {
-			var clazz = context.route[current].clazz;
-			var args  = context.route[current].args;
-			newAction = eval('new ' + clazz + '(context)');
-			current++;
+		var index = pickIndex(transition);
+		if (current != index) {
+			var clazz = context.route[index].clazz;
+			var args  = context.route[index].args;
+			newAction = eval('new ' + clazz + '(context, transition)');
+			current = index;
 		}
 
 		if (action && typeof action.handler == 'function') {
@@ -417,8 +428,9 @@ Stage = function(context) {
 	};
 
 	var animate = function() {
-		if (action.animate() == 'next') {
-			pickAction();
+		transition = action.animate();
+		if (transition) {
+			pickAction(transition);
 		}
 		requestAnimationFrame(animate);
 		if (!action.noRender) {
@@ -432,7 +444,7 @@ Stage = function(context) {
 
 	this.begin = function() {
 		this.resize();
-		pickAction();
+		pickAction('next');
 		animate();
 	}
 }
