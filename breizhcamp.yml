@@ -2,4 +2,5 @@
 route:  breizhcamp
 map:    earth.jpg
 legacy: true
+detour: true
 ---

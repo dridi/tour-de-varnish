@@ -2,4 +2,5 @@
 route:  tour-de-varnish3
 map:    earth.jpg
 legacy: true
+detour: false
 ---
