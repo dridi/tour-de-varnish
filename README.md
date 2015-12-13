@@ -61,7 +61,7 @@ Tour de Varnish relies on [jquery](http://jquery.com/) and
 
 To build the slides, you will need the following programs in your `PATH`:
 - mustache
-- slimit
+- uglify-js
 - js-yaml
 - jsonlint
 - pandoc

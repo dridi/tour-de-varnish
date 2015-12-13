@@ -290,7 +290,7 @@ TheBrain = function(context) {
  * easily be implemented in both directions, with arrows for instance, but I'm
  * definitely too lazy right now.
  */
-Slider = function(context) {
+Slider = function() {
 	var index = -1;
 	var slideList;
 
@@ -341,7 +341,7 @@ Slider = function(context) {
 /**
  * This action basically waits until it gets bored. Is that even useful ?
  */
-Waiter = function() {
+Waiter = function(context) {
 	var bored = false;
 
 	this.animate = function() {
