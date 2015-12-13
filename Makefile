@@ -18,12 +18,15 @@ all: $(FILES)
 run: all
 	firefox -private -new-window index.html
 
+CHECK_CMD = @which $(1) >/dev/null 2>&1 || \
+            (echo "error: missing$(2)" && exit 1)
+
 env-check:
-	@which mustache >/dev/null 2>&1 || (echo "Missing mustache ruby gem" && exit 1)
-	@which uglifyjs >/dev/null 2>&1 || (echo "Missing uglify-js nodejs module" && exit 1)
-	@which js-yaml  >/dev/null 2>&1 || (echo "Missing js-yaml nodejs module" && exit 1)
-	@which jsonlint >/dev/null 2>&1 || (echo "Missing demjson python module" && exit 1)
-	@which pandoc   >/dev/null 2>&1 || (echo "Missing pandoc" && exit 1)
+	$(call CHECK_CMD, mustache, "mustache ruby gem")
+	$(call CHECK_CMD, uglifyjs, "uglify-js nodejs module")
+	$(call CHECK_CMD, js-yaml,  "js-yaml nodejs module")
+	$(call CHECK_CMD, jsonlint, "demjson python module")
+	$(call CHECK_CMD, pandoc,   "pandoc")
 	@echo 'All green !'
 
 %.html: %.yml template.html.mustache slides.svg.mustache
