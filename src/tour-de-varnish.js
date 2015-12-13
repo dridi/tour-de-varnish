@@ -363,7 +363,13 @@ Waiter = function(context) {
 	};
 
 	this.handler = function(keyboardEvent) {
-		if (keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32) {
+		if (keyboardEvent.type != 'keyup') {
+			return;
+		}
+		if (keyboardEvent.keyCode == 33) {
+			bored = 'prev';
+		}
+		if (keyboardEvent.keyCode == 34) {
 			bored = 'next';
 		}
 	};
