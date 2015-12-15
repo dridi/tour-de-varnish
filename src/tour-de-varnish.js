@@ -36,14 +36,9 @@ StopWatch = function(threshold) {
  * It's basically a sphere, with a texture. It can rotate both manually or
  * automatically (also clumsily). It can travel from a destination to
  * another and will draw its path on the map.
- *
- * Once you start traveling around the world, this is serious shit, you just
- * don't back paddle. That is the lame excuse explaining why traveling has
- * been implemented only one way.
  */
 Earth = function(scene) {
 	var sphere = new THREE.Object3D();
-	var journey = [];
 	var travel;
 	var canvas = document.createElement('canvas');
 
@@ -65,47 +60,13 @@ Earth = function(scene) {
 	var mesh = new THREE.Mesh(geometry, material);
 	sphere.add(mesh);
 
-	var preparePaths = function() {
-		var current = journey.length - 1;
-		if (current == 0) {
-			return [];
-		}
-
-		var paths = [];
-		var source = journey[current - 1];
-		var target = journey[current];
-		for (var s in source.steps) {
-			var start = source.steps[s];
-			for (var e in target.steps) {
-				var end = target.steps[e];
-				if (target.bx) {
-					paths.push([
-						new THREE.Vector2(start.cx-1024, start.cy),
-						new THREE.Vector2(end.cx, end.cy)
-					]);
-					paths.push([
-						new THREE.Vector2(start.cx, start.cy),
-						new THREE.Vector2(end.cx+1024, end.cy)
-					]);
-				}
-				else {
-					paths.push([
-						new THREE.Vector2(start.cx, start.cy),
-						new THREE.Vector2(end.cx, end.cy)
-					]);
-				}
-			}
-		}
-		return paths;
-	};
-
-	var drawPaths = function(alpha) {
+	var traceRoute = function(alpha) {
 		if (travel.paths.length == 0) {
 			return;
 		}
 
 		var ctx = canvas.getContext('2d');
-		ctx.strokeStyle = 'red';
+		ctx.strokeStyle = travel.color;
 		ctx.lineWidth = 4;
 
 		for (var i=0; i < travel.paths.length; i++) {
@@ -119,11 +80,13 @@ Earth = function(scene) {
 		}
 	};
 
-	var drawSteps = function() {
+	var traceSteps = function(target) {
+		if (!target) {
+			return;
+		}
 		var ctx = canvas.getContext('2d');
-		ctx.strokeStyle = 'red';
-		ctx.fillStyle = 'red';
-		var target = journey[journey.length - 1];
+		ctx.strokeStyle = travel.color;
+		ctx.fillStyle = travel.color;
 		for (var s in target.steps) {
 			var step = target.steps[s];
 			ctx.beginPath();
@@ -133,21 +96,19 @@ Earth = function(scene) {
 		}
 	};
 
-	this.travelTo = function(destination, duration) {
-		destination.rx = AngleUtils.mod(destination.rx);
-		destination.ry = AngleUtils.mod(destination.ry);
-		journey.push(destination);
-
+	this.travelTo = function(trip, duration) {
 		travel = {
 			// give a 200ms delay for the stage to catch up
 			walk: new StopWatch(duration),
 			step: new StopWatch(duration + 200),
 			start: sphere.quaternion.clone(),
-			goal: new THREE.Quaternion().setFromEuler(
-				new THREE.Euler(destination.rx, destination.ry)
-			).normalize(),
-			paths: preparePaths()
+			goal: trip.goal,
+			source: trip.source,
+			target: trip.target,
+			color: trip.color,
+			paths: trip.paths
 		}
+		traceSteps(travel.source);
 	};
 
 	this.walk = function() {
@@ -158,10 +119,10 @@ Earth = function(scene) {
 
 		sphere.setRotationFromQuaternion(current);
 		texture.needsUpdate = true;
-		drawPaths(alpha);
+		traceRoute(alpha);
 
 		if (travel.walk.elapsed()) {
-			drawSteps();
+			traceSteps(travel.target);
 		}
 
 		return travel.step.elapsed();
@@ -188,6 +149,109 @@ Earth = function(scene) {
 	this.printRotation = function() {
 		return "Rotation:\nx=" + sphere.rotation.x + "\ny=" + sphere.rotation.y;
 	};
+};
+
+/**
+ * This object keeps track of the places we visit.
+ *
+ * It will look at the places we've been, and the new or old destinations we
+ * want to reach. It will find the best trips for us so that we can happily
+ * walk the earth.
+ */
+Journey = function() {
+	var places = [];
+
+	var findRoute = function(destination) {
+		var source, target, color;
+
+		if (destination) {
+			destination.rx = AngleUtils.mod(destination.rx);
+			destination.ry = AngleUtils.mod(destination.ry);
+
+			source = places.length == 0 ? null : places[places.length - 1];
+			target = destination;
+			places.push(destination);
+			color = 'red';
+			direction = 1;
+		}
+		else {
+			source = places.pop();
+			target = places.length == 0 ? null : places[places.length - 1];
+			color = 'yellow';
+			direction = -1;
+		}
+
+		if (target == null) {
+			target = source;
+			source = null;
+		}
+
+		return {
+			source: source,
+			target: target,
+			color: color,
+			direction: direction
+		};
+	};
+
+	var breakPath = function(paths, start, end, bx) {
+		paths.push([
+			new THREE.Vector2(start.cx-(bx*1024), start.cy),
+			new THREE.Vector2(end.cx, end.cy)
+		]);
+		paths.push([
+			new THREE.Vector2(start.cx, start.cy),
+			new THREE.Vector2(end.cx+(bx*1024), end.cy)
+		]);
+	};
+
+	var findPaths = function(route) {
+		if (!route.source) {
+			return [];
+		}
+
+		var paths = [];
+		var source = route.source;
+		var target = route.target;
+
+		for (var s in source.steps) {
+			var start = source.steps[s];
+			for (var e in target.steps) {
+				var end = target.steps[e];
+				if (target.bx === route.direction) {
+					breakPath(paths, start, end, target.bx);
+				}
+				else {
+					paths.push([
+						new THREE.Vector2(start.cx, start.cy),
+						new THREE.Vector2(end.cx, end.cy)
+					]);
+				}
+			}
+		}
+		return paths;
+	};
+
+	var quaternion = function(route) {
+		var euler = new THREE.Euler(route.target.rx, route.target.ry)
+		return new THREE.Quaternion().setFromEuler(euler).normalize();
+	};
+
+	this.prepareTrip = function(destination) {
+
+		var route = findRoute(destination);
+		var paths = findPaths(route);
+		var goal = quaternion(route);
+
+		return {
+			source: route.source,
+			target: route.target,
+			color: route.color,
+			paths: paths,
+			goal: goal
+		};
+	};
+
 };
 
 /**
@@ -223,16 +287,24 @@ Globe = function(context) {
  * It has to buy new shoes at each destination, because you know, so much
  * walking tends to be bad for your shoes.
  */
-EarthWalker = function(context) {
+EarthWalker = function(context, transition) {
 	var hasShoes = false;
 	var stopWatch;
-	var destination;
 	var duration;
+	var trip;
 
 	this.begin = function(args) {
-		destination = context.destinations[args.destination];
-		stopWatch = new StopWatch(args.wait);
+		var destination;
+		if (transition == 'prev') {
+			destination = null;
+			stopWatch = new StopWatch(1000);
+		}
+		else {
+			destination = context.destinations[args.destination];
+			stopWatch = new StopWatch(args.wait);
+		}
 		duration = args.duration;
+		trip = context.journey.prepareTrip(destination);
 	}
 
 	this.animate = function() {
@@ -241,11 +313,11 @@ EarthWalker = function(context) {
 			return '';
 		}
 		else if( ! hasShoes) {
-			context.earth.travelTo(destination, duration);
+			context.earth.travelTo(trip, duration);
 			hasShoes = true;
 		}
 
-		return context.earth.walk() ? 'next' : '';
+		return context.earth.walk() ? transition : '';
 	};
 };
 
@@ -424,6 +496,7 @@ Stage = function(context) {
 
 	current = -1;
 	context.earth = new Earth(scene);
+	context.journey = new Journey();
 
 	$('body').append(renderer.domElement);
 

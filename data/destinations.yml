@@ -32,13 +32,14 @@ japan:
 australia:
   rx: 5.82
   ry: 2.35
+  bx: -1
   steps:
     - cx: 896
       cy: 326
 hawaii:
   rx: 0.36
   ry: 1.17
-  bx: true
+  bx: 1
   steps:
     - cx: 65
       cy: 197
