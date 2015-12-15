@@ -53,8 +53,8 @@ Earth = function(scene) {
 	canvas.width = 1024;
 	canvas.height = 512;
 
-	var context = canvas.getContext('2d');
-	context.drawImage($('#world_map')[0], 0, 0);
+	var ctx = canvas.getContext('2d');
+	ctx.drawImage($('#world_map')[0], 0, 0);
 
 	var texture = new THREE.Texture(canvas);
 	var geometry = new THREE.SphereGeometry(200, 20, 20);
@@ -104,32 +104,32 @@ Earth = function(scene) {
 			return;
 		}
 
-		var context = canvas.getContext('2d');
-		context.strokeStyle = 'red';
-		context.lineWidth = 4;
+		var ctx = canvas.getContext('2d');
+		ctx.strokeStyle = 'red';
+		ctx.lineWidth = 4;
 
 		for (var i=0; i < travel.paths.length; i++) {
 			var start = travel.paths[i][0];
 			var goal  = travel.paths[i][1];
 			var current = start.clone().lerp(goal, alpha);
-			context.beginPath();
-			context.moveTo(start.x, start.y);
-			context.lineTo(current.x, current.y);
-			context.stroke();
+			ctx.beginPath();
+			ctx.moveTo(start.x, start.y);
+			ctx.lineTo(current.x, current.y);
+			ctx.stroke();
 		}
 	};
 
 	var drawSteps = function() {
-		var context = canvas.getContext('2d');
-		context.strokeStyle = 'red';
-		context.fillStyle = 'red';
+		var ctx = canvas.getContext('2d');
+		ctx.strokeStyle = 'red';
+		ctx.fillStyle = 'red';
 		var target = journey[journey.length - 1];
 		for (var s in target.steps) {
 			var step = target.steps[s];
-			context.beginPath();
-			context.arc(step.cx, step.cy, 4, 0, AngleUtils.REV);
-			context.stroke();
-			context.fill();
+			ctx.beginPath();
+			ctx.arc(step.cx, step.cy, 4, 0, AngleUtils.REV);
+			ctx.stroke();
+			ctx.fill();
 		}
 	};
 
@@ -181,8 +181,8 @@ Earth = function(scene) {
 
 	this.splash = function() {
 		var targetCanvas = $('canvas')[0];
-		var context = targetCanvas.getContext('2d');
-		context.drawImage(canvas, 0, 0, targetCanvas.width, targetCanvas.height);
+		var ctx = targetCanvas.getContext('2d');
+		ctx.drawImage(canvas, 0, 0, targetCanvas.width, targetCanvas.height);
 	};
 
 	this.printRotation = function() {
