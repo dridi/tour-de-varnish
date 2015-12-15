@@ -1,6 +1,9 @@
 ---
 route:  tour-de-varnish3
 map:    earth.jpg
+src:    js
+lib:    js
+js:     min.js
 legacy: true
 detour: false
 ---
