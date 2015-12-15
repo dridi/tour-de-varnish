@@ -13,7 +13,7 @@ AngleUtils = {
 		while (angle <  -Math.PI) angle += this.REV;
 		return angle;
 	}
-}
+};
 
 /**
  * A stop watch...
@@ -28,7 +28,7 @@ StopWatch = function(threshold) {
 	this.progress = function() {
 		return (new Date().getTime() - start) / threshold;
 	}
-}
+};
 
 /**
  * This object keeps track of the planet's state and operations.
@@ -215,7 +215,7 @@ Globe = function(context) {
 			transition = 'next';
 		}
 	};
-}
+};
 
 /**
  * This action travels from the current position to the next destination.
@@ -247,7 +247,7 @@ EarthWalker = function(context) {
 
 		return context.earth.walk() ? 'next' : '';
 	};
-}
+};
 
 /**
  * This action renders the earth as a flat map.
@@ -261,7 +261,7 @@ Monad = function(context) {
 	};
 
 	this.noRender = true;
-}
+};
 
 /**
  * This action can take over the world, TONIGHT!
@@ -299,7 +299,7 @@ TheBrain = function(context) {
 			console.log( context.earth.printRotation() );
 		}
 	};
-}
+};
 
 /**
  * This action travels to parallel 2D worlds.
@@ -367,12 +367,12 @@ Slider = function(context, transition) {
 	};
 
 	this.noRender = true;
-}
+};
 
 /**
  * This action basically waits until it gets bored. Is that even useful ?
  */
-Waiter = function(context) {
+Waiter = function() {
 	var bored = '';
 
 	this.animate = function() {
@@ -390,7 +390,7 @@ Waiter = function(context) {
 			bored = 'next';
 		}
 	};
-}
+};
 
 /**
  * This object eats data and produces a presentation in return.
@@ -482,7 +482,7 @@ Stage = function(context) {
 		pickAction('next');
 		animate();
 	}
-}
+};
 
 function endJourney() {
 	return "On arrête le voyage ???";
