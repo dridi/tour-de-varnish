@@ -24,6 +24,10 @@ StopWatch = function(threshold) {
 	this.elapsed = function() {
 		return (new Date().getTime() - start) > threshold;
 	};
+
+	this.progress = function() {
+		return (new Date().getTime() - start) / threshold;
+	}
 }
 
 /**
@@ -129,13 +133,15 @@ Earth = function(scene) {
 		}
 	};
 
-	this.travelTo = function(destination) {
+	this.travelTo = function(destination, duration) {
 		destination.rx = AngleUtils.mod(destination.rx);
 		destination.ry = AngleUtils.mod(destination.ry);
 		journey.push(destination);
 
 		travel = {
-			time: new Date().getTime(),
+			// give a 200ms delay for the stage to catch up
+			walk: new StopWatch(duration),
+			step: new StopWatch(duration + 200),
 			start: sphere.quaternion.clone(),
 			goal: new THREE.Quaternion().setFromEuler(
 				new THREE.Euler(destination.rx, destination.ry)
@@ -144,9 +150,8 @@ Earth = function(scene) {
 		}
 	};
 
-	this.walk = function(duration) {
-		var elapsed = new Date().getTime() - travel.time;
-		var alpha = Math.min(1, elapsed/duration);
+	this.walk = function() {
+		var alpha = Math.min(travel.walk.progress(), 1);
 		var current = new THREE.Quaternion();
 
 		THREE.Quaternion.slerp(travel.start, travel.goal, current, alpha);
@@ -155,12 +160,11 @@ Earth = function(scene) {
 		texture.needsUpdate = true;
 		drawPaths(alpha);
 
-		if (elapsed >= duration) {
+		if (travel.walk.elapsed()) {
 			drawSteps();
 		}
 
-		// give a 200ms delay for the stage to catch up
-		return elapsed > (duration + 200);
+		return travel.step.elapsed();
 	};
 
 	this.setRotation = function(rotation) {
@@ -233,15 +237,15 @@ EarthWalker = function(context) {
 
 	this.animate = function() {
 		if ( ! stopWatch.elapsed() ) {
-			context.earth.walk(0); // lazy way to trigger a redraw
+			context.earth.walk(); // lazy way to trigger a redraw
 			return '';
 		}
 		else if( ! hasShoes) {
-			context.earth.travelTo(destination);
+			context.earth.travelTo(destination, duration);
 			hasShoes = true;
 		}
 
-		return context.earth.walk(duration) ? 'next' : '';
+		return context.earth.walk() ? 'next' : '';
 	};
 }
 
