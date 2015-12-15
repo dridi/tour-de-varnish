@@ -300,11 +300,9 @@ TheBrain = function(context) {
 /**
  * This action travels to parallel 2D worlds.
  *
- * It basically makes the SVG element and the rightful slide visible. It could
- * easily be implemented in both directions, with arrows for instance, but I'm
- * definitely too lazy right now.
+ * It basically makes the SVG element and the rightful slide visible.
  */
-Slider = function() {
+Slider = function(context, transition) {
 	var index = -1;
 	var slideList;
 
@@ -323,8 +321,7 @@ Slider = function() {
 	};
 
 	var showNextSlide = function() {
-		index++;
-		if (index < slideList.length) {
+		if (index >= 0 && index < slideList.length) {
 			deactivate('g.active');
 			activate('#' + slideList[index]);
 		}
@@ -335,16 +332,32 @@ Slider = function() {
 
 	this.begin = function(args) {
 		slideList = args;
+		switch (transition) {
+			case 'next': index = 0; break;
+			case 'prev': index = slideList.length - 1; break;
+		}
 		showNextSlide();
 		$('#slides').attr('class', 'active');
 	}
 
 	this.animate = function() {
-		return index == slideList.length ? 'next' : '';
+		switch (index) {
+			case -1: return 'prev';
+			case slideList.length: return 'next';
+			default: return '';
+		}
 	};
 
 	this.handler = function(keyboardEvent) {
-		if (keyboardEvent.type == "keyup" && keyboardEvent.keyCode == 32) {
+		if (keyboardEvent.type != 'keyup') {
+			return;
+		}
+		if (keyboardEvent.keyCode == 33) {
+			index--;
+			showNextSlide();
+		}
+		if (keyboardEvent.keyCode == 34) {
+			index++;
 			showNextSlide();
 		}
 	};
