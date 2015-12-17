@@ -128,12 +128,6 @@ Earth = function(scene) {
 		return travel.step.elapsed();
 	};
 
-	this.setRotation = function(rotation) {
-		texture.needsUpdate = true;
-		sphere.rotation.x = rotation.x;
-		sphere.rotation.y = rotation.y;
-	};
-
 	this.rotate = function(rotation) {
 		texture.needsUpdate = true;
 		sphere.rotation.x += rotation.x;
@@ -259,8 +253,6 @@ Journey = function() {
  */
 Globe = function(context) {
 	var transition = '';
-
-	context.earth.setRotation({x: -0.2, y: 0});
 
 	this.animate = function() {
 		// TODO time-based speed
@@ -496,6 +488,7 @@ Stage = function(context) {
 
 	current = -1;
 	context.earth = new Earth(scene);
+	context.earth.rotate({x: -0.4, y: 0});
 	context.journey = new Journey();
 
 	$('body').append(renderer.domElement);
