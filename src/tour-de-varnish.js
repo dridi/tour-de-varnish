@@ -525,14 +525,15 @@ Stage = function(context) {
 	}
 
 	var pickAction = function(transition) {
-		var newAction = null;
 		var index = pickIndex(transition);
-		if (current != index) {
-			var clazz = context.route[index].clazz;
-			var args  = context.route[index].args;
-			newAction = eval('new ' + clazz + '(context, transition)');
-			current = index;
+		if (current == index) {
+			return;
 		}
+
+		var clazz = context.route[index].clazz;
+		var args  = context.route[index].args;
+		var newAction = eval('new ' + clazz + '(context, transition)');
+		current = index;
 
 		if (action && typeof action.handler == 'function') {
 			$(window).off('keydown keyup', action.handler);
