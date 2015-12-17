@@ -285,7 +285,7 @@ EarthWalker = function(context, transition) {
 	var duration;
 	var trip;
 
-	this.begin = function(args) {
+	this.init = function(args) {
 		var destination;
 		if (transition == 'prev') {
 			destination = null;
@@ -319,7 +319,7 @@ EarthWalker = function(context, transition) {
 Monad = function(context) {
 	var transition = '';
 
-	this.begin = function() {
+	this.init = function() {
 		context.earth.splash();
 	}
 
@@ -419,7 +419,7 @@ Slider = function(context, transition) {
 		}
 	};
 
-	this.begin = function(args) {
+	this.init = function(args) {
 		slideList = args;
 		switch (transition) {
 			case 'next': index = 0; break;
@@ -545,8 +545,8 @@ Stage = function(context) {
 			$(window).on('keydown keyup', action.handler);
 		}
 
-		if (action && typeof action.begin == 'function') {
-			action.begin(args);
+		if (action && typeof action.init == 'function') {
+			action.init(args);
 		}
 	};
 
@@ -565,7 +565,7 @@ Stage = function(context) {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 	};
 
-	this.begin = function() {
+	this.init = function() {
 		this.resize();
 		pickAction('next');
 		animate();
