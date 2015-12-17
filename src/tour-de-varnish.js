@@ -315,16 +315,37 @@ EarthWalker = function(context, transition) {
 
 /**
  * This action renders the earth as a flat map.
- *
- * It's a trap, you can't leave this action.
  */
 Monad = function(context) {
-	this.animate = function() {
+	var transition = '';
+
+	this.begin = function() {
 		context.earth.splash();
-		return '';
+	}
+
+	this.animate = function() {
+		if (transition == 'prev') {
+			var targetCanvas = $('canvas')[0];
+			var ctx = targetCanvas.getContext('2d');
+			ctx.fillStyle = 'black';
+			ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+		}
+		return transition;
 	};
 
 	this.noRender = true;
+
+	this.handler = function(keyboardEvent) {
+		if (keyboardEvent.type != 'keyup') {
+			return;
+		}
+		if (keyboardEvent.keyCode == 33) {
+			transition = 'prev';
+		}
+		if (keyboardEvent.keyCode == 34) {
+			transition = 'next';
+		}
+	};
 };
 
 /**
