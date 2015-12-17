@@ -323,13 +323,14 @@ Monad = function(context) {
 		context.earth.splash();
 	}
 
+	this.fini = function() {
+		var targetCanvas = $('canvas')[0];
+		var ctx = targetCanvas.getContext('2d');
+		ctx.fillStyle = 'black';
+		ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+	}
+
 	this.animate = function() {
-		if (transition == 'prev') {
-			var targetCanvas = $('canvas')[0];
-			var ctx = targetCanvas.getContext('2d');
-			ctx.fillStyle = 'black';
-			ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-		}
 		return transition;
 	};
 
@@ -414,9 +415,6 @@ Slider = function(context, transition) {
 			deactivate('g.active');
 			activate('#' + slideList[index]);
 		}
-		else {
-			$('#slides').attr('class', '');
-		}
 	};
 
 	this.init = function(args) {
@@ -427,13 +425,22 @@ Slider = function(context, transition) {
 		}
 		showNextSlide();
 		$('#slides').attr('class', 'active');
-	}
+	};
+
+	this.fini = function() {
+		$('#slides').attr('class', '');
+	};
 
 	this.animate = function() {
 		switch (index) {
-			case -1: return 'prev';
-			case slideList.length: return 'next';
-			default: return '';
+			case -1:
+				index++;
+				return 'prev';
+			case slideList.length:
+				index--;
+				return 'next';
+			default:
+				return '';
 		}
 	};
 
@@ -537,6 +544,10 @@ Stage = function(context) {
 
 		if (action && typeof action.handler == 'function') {
 			$(window).off('keydown keyup', action.handler);
+		}
+
+		if (action && typeof action.fini == 'function') {
+			action.fini();
 		}
 
 		action = newAction;
