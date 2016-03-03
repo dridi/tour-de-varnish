@@ -1,7 +1,7 @@
 ---
 - clazz: Slider
   args:
-    - breizhcamp-title
+    - mobiskill-title
 - clazz: Globe
 - clazz: EarthWalker
   args:
@@ -12,7 +12,7 @@
   args:
     - verne
     - red_herring
-    - me-2013
+    - me-2016
 - clazz: EarthWalker
   args:
     destination: norway
@@ -20,7 +20,7 @@
     duration: 300
 - clazz: Slider
   args:
-    - norway
+    - phk-old
     - principle
 - clazz: EarthWalker
   args:
@@ -32,7 +32,7 @@
     - freebsd
     - linux
     - windows
-    - package3
+    - package4
 - clazz: EarthWalker
   args:
     destination: india
@@ -41,7 +41,8 @@
 - clazz: Slider
   args:
     - vcl
-    - state-machine3
+    - state-machine4
+    - threading4
     - snippet
 - clazz: EarthWalker
   args:
@@ -62,6 +63,7 @@
     - cache
     - invalidation
     - grace
+    - keep
 - clazz: EarthWalker
   args:
     destination: hawaii
@@ -77,8 +79,9 @@
     duration: 2000
 - clazz: Slider
   args:
-    - directors3
-    - fallback3
+    - directors4
+    - fallback4
+    - transport
 - clazz: EarthWalker
   args:
     destination: newYork
@@ -99,76 +102,6 @@
     - varnishadm
 - clazz: EarthWalker
   args:
-    destination: mauritania
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - logs
-    - varnishlog
-- clazz: EarthWalker
-  args:
-    destination: libya
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - title4
-    - varnish3
-    - not_bad
-    - varnish4-guru
-- clazz: EarthWalker
-  args:
-    destination: congo
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - vcl4
-    - vmod4
-    - directors3to4
-- clazz: EarthWalker
-  args:
-    destination: chad
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - streaming
-    - threading3
-    - streaming4
-    - threading4
-- clazz: EarthWalker
-  args:
-    destination: sudan
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - security
-    - security4
-- clazz: EarthWalker
-  args:
-    destination: ghana
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - logs4
-    - transactions
-    - query-language
-- clazz: EarthWalker
-  args:
-    destination: libya
-    wait: 1000
-    duration: 1000
-- clazz: Slider
-  args:
-    - varnish4-guru
-    - varnish4
-    - not_bad4
-- clazz: EarthWalker
-  args:
     destination: france
     wait: 1000
     duration: 600
@@ -180,7 +113,4 @@
     - achievement
     - features
 - clazz: Globe
-- clazz: Slider
-  args:
-    - breizhcamp-feedback
 - clazz: Monad

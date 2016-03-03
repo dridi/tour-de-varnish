@@ -5,6 +5,7 @@
 
 - [Le tour de Varnish 3](tour-de-varnish3.html) (l'originale)
 - [Version BreizhCamp 2014](breizhcamp.html)
+- [Paris Varnish Cache Meetup #1](meetup-1.html)
 
 _Cette présentation est prévue pour un **affichage 4/3**. Vous pouvez
 utiliser la vue **Responsive Design** de votre navigateur pour la

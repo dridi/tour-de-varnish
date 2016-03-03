@@ -51,7 +51,7 @@
 - clazz: Slider
   args:
     - backend
-    - virtualhost3
+    - virtualhost
 - clazz: EarthWalker
   args:
     destination: australia
