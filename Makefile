@@ -11,9 +11,16 @@ JS_MIN_FILES = $(JS_SRC_FILES:src/%.js=js/%.min.js) \
 
 FILES = index.html $(JS_MIN_FILES) $(PRESENTATIONS) $(JSON_DATA)
 
+DIST = tour-de-varnish-$(shell git rev-parse --short HEAD)
+
 all: $(FILES)
 
-.PHONY: all clean env-check run
+dist: $(DIST).tar.gz
+
+$(DIST).tar.gz: $(FILES) img/ woff/
+	@tar -zcf $@ --transform s:^:$(DIST)/: $^
+
+.PHONY: all clean env-check run show
 
 run: all
 	firefox -private -new-window index.html
@@ -52,4 +59,4 @@ js/%.min.js: lib/%.js
 	js-yaml -j $< | jsonlint -F > $@
 
 clean:
-	rm -f $(FILES)
+	rm -f $(FILES) $(DIST).tar.gz
