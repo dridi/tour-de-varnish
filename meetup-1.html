@@ -13,10 +13,10 @@
       var context = {};
 
       $(window).load(function () {
-        $(window).on("beforeunload", endJourney);
+        //$(window).on("beforeunload", endJourney);
         $.getJSON('data/destinations.json').then(function(data) {
           context.destinations = data;
-          return $.getJSON('data/breizhcamp.json');
+          return $.getJSON('data/meetup.json');
         }).then(function(data) {
           context.route = data;
           var stage = new Stage(context);
@@ -53,7 +53,7 @@
           style="fill: #fff;
                  stroke: #000;
                  stroke-width: 3;" />
-
+    
         <clipPath id="me_path">
           <rect x="0" y="220" width="200" height="290" />
         </clipPath>
@@ -119,7 +119,7 @@
           <text x="80" y="300">c2</text>
           <text x="80" y="430">c3</text>
         </g>
-
+    
         <g id="forkme">
           <image
             xlink:href="img/forkme_right_orange_ff7600.png"
@@ -343,7 +343,7 @@
         <text y="150">
           <tspan x="60" dy="40">• Contient la politique de cache</tspan>
           <tspan x="60" dy="40">• Domain Specific Language (DSL)</tspan>
-          <tspan x="60" dy="40">• Proche du Perl (connu de nos admins ;)</tspan>
+          <tspan x="60" dy="40">   ◦ manipule des messages HTTP</tspan>
           <tspan x="60" dy="40">• Transformé en C puis compilé</tspan>
           <tspan x="60" dy="40">• Modifications à chaud</tspan>
           <tspan x="60" dy="40">• Expose un automate fini</tspan>
@@ -434,7 +434,7 @@
           <tspan x="60" dy="30">sub vcl_recv {                    </tspan>
           <tspan x="60" dy="30">  if (req.http.Host ==            </tspan>
           <tspan x="60" dy="30">        "static.example.com") {   </tspan>
-          <tspan x="60" dy="30">    set req.backend = static;     </tspan>
+          <tspan x="60" dy="30">    set req.backend_hint = static;</tspan>
           <tspan x="60" dy="30">  }                               </tspan>
           <tspan x="60" dy="30">}                                 </tspan>
         </text>
@@ -613,6 +613,7 @@
           <tspan x="60" dy="80">Désuet depuis Varnish 3</tspan>
           <tspan x="60" dy="40">   • architecture modulaire</tspan>
           <tspan x="60" dy="40">   • VMOD => Varnish Module</tspan>
+          <tspan x="60" dy="80">Désactivé par défaut depuis Varnish 4</tspan>
         </text>
       </g>
     
@@ -680,217 +681,6 @@
         </text>
       </g>
     
-      <g id="title4" class="title">
-        <image xlink:href="img/superbunny.png" x="25%" y="25%" width="50%" height="50%"/>
-        <text>
-          <textPath xlink:href="#title_path">
-            Le détour Varnish 4 en 15 minutes.
-          </textPath>
-          <animateTransform
-            attributeName="transform"
-            begin="0s"
-            dur="10s"
-            type="rotate"
-            from="0 400 300"
-            to="360 400 300"
-            repeatCount="indefinite" />
-        </text>
-      </g>
-    
-      <g id="varnish3">
-        <text x="200" y="100">Quoi de neuf dans Varnish 3 ?</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">• Des améliorations du VCL</tspan>
-          <tspan x="60" dy="40">• L'invalidation avec ban en plus de la purge</tspan>
-          <tspan x="60" dy="40">• L'apparition des modules</tspan>
-          <tspan x="60" dy="40">• La (dé)compression gzip à la volée</tspan>
-          <tspan x="60" dy="40">• Un support partiel du streaming</tspan>
-        </text>
-      </g>
-    
-      <g id="not_bad">
-        <use xlink:href="#varnish3" x="0" y="0"/>
-        <image xlink:href="img/not_bad.png" x="0" y="150" width="800" height="450"/>
-      </g>
-    
-      <g id="varnish4-guru">
-        <text x="200" y="100">Quoi de neuf dans Varnish 4 ?</text>
-        <image xlink:href="img/guru-meditation.png" x="296" y="150" width="208" height="303"/>
-      </g>
-    
-      <g id="vcl4">
-        <text x="200" y="100">Les changements dans le VCL</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">• Un marqueur "vcl 4.0"</tspan>
-          <tspan x="60" dy="40">• Des étapes renommées</tspan>
-          <tspan x="60" dy="40">• De nouvelles étapes</tspan>
-          <tspan x="60" dy="40">• De nouvelles fonctions</tspan>
-          <tspan x="60" dy="40">• Des objets (comme dans orienté objet)</tspan>
-          <tspan x="60" dy="40">• Un nouveau module : vmod_directors</tspan>
-        </text>
-      </g>
-    
-      <g id="directors3to4">
-        <text x="290" y="50">vmod_directors</text>
-        <text y="100" class="code" xml:space="preserve">
-          <tspan x="60" dy="30"># varnish 3                      </tspan>
-          <tspan x="60" dy="30">director www fallback {          </tspan>
-          <tspan x="60" dy="30">  { .backend = www1; }           </tspan>
-          <tspan x="60" dy="30">  { .backend = www2; }           </tspan>
-          <tspan x="60" dy="30">  { .backend = www3; }           </tspan>
-          <tspan x="60" dy="30">}                                </tspan>
-          <tspan x="60" dy="30">                                 </tspan>
-          <tspan x="60" dy="30"># varnish 4                      </tspan>
-          <tspan x="60" dy="30">sub vcl_init {                   </tspan>
-          <tspan x="60" dy="30">  new www = directors.fallback();</tspan>
-          <tspan x="60" dy="30">  www.add_backend(www1);         </tspan>
-          <tspan x="60" dy="30">  www.add_backend(www2);         </tspan>
-          <tspan x="60" dy="30">  www.add_backend(www3);         </tspan>
-          <tspan x="60" dy="30">}                                </tspan>
-        </text>
-      </g>
-    
-      <g id="streaming">
-        <text x="240" y="100">Du streaming partiel ?</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">Pas de màj concurrentes d'un "objet" du cache</tspan>
-          <tspan x="60" dy="40">   • latence pendant le rafraîchissement d'un objet</tspan>
-          <tspan x="60" dy="40">   • streaming possible pour le premier client</tspan>
-          <tspan x="60" dy="40">   • les clients suivants doivent attendre</tspan>
-          <tspan x="60" dy="80">Contournable</tspan>
-          <tspan x="60" dy="40">   • par le mécanisme de grace</tspan>
-          <tspan x="60" dy="40">   • par un hack en VCL</tspan>
-        </text>
-      </g>
-    
-      <g id="threading3" class="threading">
-        <use xlink:href="#threading" x="0" y="0"/>
-    
-        <text x="450" y="70">v3</text>
-    
-        <use xlink:href="#streaming_thread" x="360" y="130"/>
-        <use xlink:href="#waiting_thread"   x="360" y="260"/>
-        <use xlink:href="#waiting_thread"   x="360" y="390"/>
-    
-        <line x1="170" x2="330" y1="170" y2="170"/>
-        <line x1="170" x2="330" y1="300" y2="300"/>
-        <line x1="170" x2="330" y1="430" y2="430"/>
-    
-        <line x1="470" x2="570" y1="170" y2="170"/>
-      </g>
-    
-      <g id="streaming4">
-        <text x="150" y="100">Un support complet du streaming ?</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">Pas de màj concurrentes d'un "objet" du cache</tspan>
-          <tspan x="60" dy="40">   • des threads "clients" et "backends"</tspan>
-          <tspan x="60" dy="40">   • un thread "backend" se charge de la màj</tspan>
-          <tspan x="60" dy="40">   • streaming possible pour les threads "clients"</tspan>
-          <tspan x="60" dy="80">Bénéfices ?</tspan>
-          <tspan x="60" dy="40">   • une architecture encore plus réactive</tspan>
-          <tspan x="60" dy="40">   • suppression des latences d'un "cache miss"</tspan>
-          <tspan x="60" dy="40">   • améliore la mise en cascade de caches</tspan>
-        </text>
-      </g>
-    
-      <g id="security">
-        <text x="225" y="100">La sécurité dans Varnish 4</text>
-        <image xlink:href="img/guru-meditation.png" x="296" y="150" width="208" height="303"/>
-        <image
-          xlink:href="img/plasma.gif"
-          x="175" y="130" width="450" height="340"
-          opacity="0.5" clip-path="url(#plasma_path)" />
-      </g>
-    
-      <g id="security4">
-        <text x="225" y="100">La sécurité dans Varnish 4</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">Architecture de varnishd</tspan>
-          <tspan x="60" dy="40">   • deux processus "management" et "cache"</tspan>
-          <tspan x="60" dy="40">   • paramètres et VCL modifiables à chaud</tspan>
-          <tspan x="60" dy="40">   • VCL transformé en C puis compilé</tspan>
-          <tspan x="60" dy="40">   • pas de chiffrement (SSL/TLS)</tspan>
-          <tspan x="60" dy="80">Nouveautés</tspan>
-          <tspan x="60" dy="40">   • paramètres en lecture seule</tspan>
-          <tspan x="60" dy="40">   • C{ inline_c(); }C désactivé par défaut</tspan>
-        </text>
-      </g>
-    
-      <g id="vmod4">
-        <text x="225" y="100">Les modules dans Varnish 4</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">• Nouveaux types (IP, BACKEND, BLOB...)</tspan>
-          <tspan x="60" dy="40">• Des objets manipulables dans le VCL</tspan>
-          <tspan x="60" dy="40">• De nouveaux points d'entrée</tspan>
-          <tspan x="60" dy="40">   • delivery pipeline</tspan>
-          <tspan x="60" dy="40">   • fetch processors</tspan>
-          <tspan x="60" dy="40">• Gestion de la documentation</tspan>
-        </text>
-      </g>
-    
-      <g id="logs4">
-        <text x="250" y="100">Les logs dans Varnish 4</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">• Nouvelle architecture</tspan>
-          <tspan x="60" dy="40">   • Meilleures performances (zero copy)</tspan>
-          <tspan x="60" dy="40">• Transactions et groupes de transactions</tspan>
-          <tspan x="60" dy="40">• Un langage de requêtes</tspan>
-          <tspan x="60" dy="40">• Filtrage des logs</tspan>
-        </text>
-      </g>
-    
-      <g id="transactions">
-        <text x="250" y="100">Les logs dans Varnish 4</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">Transactions</tspan>
-          <tspan x="60" dy="40">• requête du client</tspan>
-          <tspan x="60" dy="40">• requête au backend</tspan>
-          <tspan x="60" dy="40">• sous-requête ESI</tspan>
-          <tspan x="60" dy="40">• session</tspan>
-        </text>
-        <text y="150" xml:space="preserve">
-          <tspan x="400" dy="40">Groupes de transactions</tspan>
-          <tspan x="400" dy="40">• par VXID</tspan>
-          <tspan x="400" dy="40">• par requête</tspan>
-          <tspan x="400" dy="40">• par session</tspan>
-          <tspan x="400" dy="40">• brut (raw)</tspan>
-        </text>
-        <text x="110" y="480">varnishlog -g {vxid | request | session | raw}</text>
-      </g>
-    
-      <g id="query-language">
-        <text x="250" y="100">Les logs dans Varnish 4</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">Langage de requêtes</tspan>
-          <tspan x="60" dy="40">• comparaisons de chaînes</tspan>
-          <tspan x="60" dy="40">• comparaisons de nombres</tspan>
-          <tspan x="60" dy="40">• expressions régulières</tspan>
-          <tspan x="60" dy="40">• opérateurs logiques</tspan>
-          <tspan x="60" dy="40">• ...</tspan>
-        </text>
-        <text y="440" xml:space="preserve">
-          <tspan x="60" dy="40">-q 'ReqMethod eq "GET" and ReqUrl !~ "^/static"'</tspan>
-          <tspan x="60" dy="40">-q 'RespStatus &gt;= 200 and RespStatus &lt; 300'</tspan>
-        </text>
-      </g>
-    
-      <g id="varnish4">
-        <text x="200" y="100">Quoi de neuf dans Varnish 4 ?</text>
-        <text y="150" xml:space="preserve">
-          <tspan x="60" dy="40">• Des améliorations du VCL</tspan>
-          <tspan x="60" dy="40">• Une architecture encore plus réactive</tspan>
-          <tspan x="60" dy="40">• Un support complet du streaming</tspan>
-          <tspan x="60" dy="40">• Une sécurité accrue</tspan>
-          <tspan x="60" dy="40">• De nouveaux points d'extension pour les modules</tspan>
-          <tspan x="60" dy="40">   ◦ un nouveau vmod_directors</tspan>
-          <tspan x="60" dy="40">• Une refonte de la gestion des logs</tspan>
-        </text>
-      </g>
-    
-      <g id="not_bad4">
-        <use xlink:href="#varnish4" x="0" y="0"/>
-        <image xlink:href="img/not_bad4.png" x="0" y="150" width="800" height="450"/>
-      </g>
     
       <!-- fin du tour de Varnish -->
     
