@@ -18,6 +18,11 @@ all: $(FILES)
 run: all
 	firefox -private -new-window index.html
 
+# XXX: this is very racy, damn you firefoctopus :(
+show: run
+	@sleep 1
+	@xdotool key F11
+
 CHECK_CMD = @which $(1) >/dev/null 2>&1 || \
             (echo "error: missing$(2)" && exit 1)
 
