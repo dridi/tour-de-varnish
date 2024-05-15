@@ -216,7 +216,7 @@ Maybe one day...
 
 - ☑ make the talk
 - ☐ learn javascript (because the code is horrible)
-- ☐ backward navigation
+- ☑ backward navigation
 - ☑ add a build system
 - ☐ fix race conditions
 - ☐ fix performance issues
